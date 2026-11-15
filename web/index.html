@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FireCal · Is this fire season normal?</title>
-  <meta name="description" content="25 years of NASA satellite fire detections, made comparable across two generations of satellites. Pick a place and see whether this fire season is normal." />
+  <title>FireCal · What's burning in your area, and is it unusual?</title>
+  <meta name="description" content="See the fires NASA satellites detected near you this week, whether that is unusual for the time of year, and what the weather will do next. Built on 25 years of MODIS and VIIRS detections combined into one record." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -17,50 +17,70 @@
         <div class="brand"><span class="logo" aria-hidden="true"></span><b>FireCal</b></div>
         <span class="badge">NASA satellite data through <span id="updated"></span></span>
       </div>
-      <div class="herogrid">
-        <div class="pitch">
-          <h1>Is this fire season normal?</h1>
-          <p class="lede">NASA satellites have watched every fire from space since 2000. But the old and new satellites count fires differently, so the record can't be compared across the years. <b>FireCal fixes that</b>, giving one consistent fire history for any place.</p>
-          <div class="places" id="places" role="group" aria-label="Choose a place"></div>
-          <p class="hint">Or <a href="#explore">click anywhere on the map</a> to choose your own area.</p>
-        </div>
-        <article class="answer" id="answer" aria-live="polite"></article>
-      </div>
+      <h1>What's burning in your area, and is it unusual?</h1>
+      <p class="lede">For emergency analysts and land managers: this week's fire detections from NASA satellites, set against 25 years of records for the same place and season, with the wind and humidity that decide what happens next.</p>
+      <form class="search" id="search" role="search">
+        <input id="q" type="search" placeholder="Search a town, address or lat, lon in Greater Houston" aria-label="Search a place" autocomplete="off" />
+        <button type="submit" class="go">Search</button>
+        <button type="button" id="locate">Use my location</button>
+      </form>
+      <div class="places" id="places" role="group" aria-label="Or pick a place"></div>
+      <p class="hint" id="searchmsg">Or click anywhere on the map.</p>
     </div>
   </header>
 
   <main>
-    <section class="band">
-      <div class="wrap">
-        <div class="sechead">
-          <p class="kicker">The fire calendar</p>
-          <h2 id="calhead">25 years of burning, month by month</h2>
-          <p class="sub">Each ring is one year: 2001 at the centre, today on the outside. Darker red means more burning. Read it like a clock: January at the top.</p>
-        </div>
-        <div class="calgrid">
-          <div class="clockcard">
-            <div class="viewtoggle" role="tablist">
-              <button role="tab" data-v="clock" aria-selected="true">Fire clock</button>
-              <button role="tab" data-v="grid" aria-selected="false">Grid</button>
-            </div>
-            <div id="clock" class="clock anim"></div>
-            <div id="legend" class="legend"></div>
-          </div>
-          <aside class="insights">
-            <h3>What the calendar says</h3>
-            <ul id="insights"></ul>
-            <div id="detail" class="detail" aria-live="polite">Hover any month for details.</div>
-          </aside>
-        </div>
+    <section class="app wrap" id="app">
+      <div class="mapside">
+        <div id="map" role="application" aria-label="Map: click to choose the centre of your area"></div>
+        <div class="maplegend" id="maplegend"></div>
       </div>
+
+      <aside class="panel">
+        <article class="answer card" id="answer" aria-live="polite"></article>
+        <div class="card now" id="now" aria-live="polite"></div>
+
+        <div class="card calcard">
+          <div class="cardhead">
+            <h3 id="calhead">Burning calendar</h3>
+            <div class="viewtoggle" role="tablist">
+              <button role="tab" data-v="grid" aria-selected="true">Calendar</button>
+              <button role="tab" data-v="clock" aria-selected="false">Fire clock</button>
+            </div>
+          </div>
+          <p class="note" style="margin:0 0 10px">One square per month, 2000 to today. Darker means more burning in this area.</p>
+          <div id="clock" class="clock"></div>
+          <div id="legend" class="legend"></div>
+          <div id="detail" class="detail" aria-live="polite"></div>
+          <ul id="insights" class="insights"></ul>
+        </div>
+
+        <div class="card controls">
+          <h3>Download this area</h3>
+          <label class="ctl"><span>Area radius around a clicked or searched point</span>
+            <span class="radius"><input type="range" id="radius" min="5" max="60" step="5" value="25" /><output id="radiusout">25 km</output></span>
+          </label>
+          <div class="ctl two">
+            <label><span>From</span><input type="month" id="from" /></label>
+            <label><span>To</span><input type="month" id="to" /></label>
+          </div>
+          <div class="dlrow">
+            <button id="dl-hot" type="button" class="primary">Detections (CSV)</button>
+            <button id="dl-cal" type="button">Calendar (CSV)</button>
+            <button id="dl-svg" type="button">Calendar image (SVG)</button>
+            <button id="dl-meta" type="button">Sources &amp; method (JSON)</button>
+          </div>
+          <p class="note" id="dlinfo"></p>
+        </div>
+      </aside>
     </section>
 
-    <section class="band alt">
+    <section class="band alt" id="why">
       <div class="wrap">
         <div class="sechead">
-          <p class="kicker">Why this matters</p>
+          <p class="kicker">Why "normal" can be trusted</p>
           <h2>The satellites changed. The fires didn't.</h2>
-          <p class="sub">In 2012 NASA's new VIIRS sensor joined the older MODIS. VIIRS sees much smaller fires, so simply adding up detections makes it look like burning suddenly jumped.</p>
+          <p class="sub">MODIS, the sensor behind NASA's fire record since 2000, is retiring. Its successor VIIRS sees far smaller fires, so the two can't be compared directly. Without a way to connect them, the first decade of fire history is lost. FireCal connects them, so it no longer matters which sensor a hotspot came from.</p>
         </div>
         <div class="story card">
           <div class="seg" role="radiogroup" aria-label="Compare" id="storytoggle">
@@ -76,7 +96,7 @@
     <section class="band">
       <div class="wrap">
         <div class="sechead">
-          <p class="kicker">Can you trust it?</p>
+          <p class="kicker">The proof</p>
           <h2>Tested on years it had never seen</h2>
           <p class="sub">For every year since 2012 we hid that year, trained on the rest, and asked FireCal to rebuild it from the old MODIS sensor alone. Then we checked against what VIIRS actually saw.</p>
         </div>
@@ -84,47 +104,7 @@
       </div>
     </section>
 
-    <section class="band alt" id="explore">
-      <div class="wrap">
-        <div class="sechead">
-          <p class="kicker">Explore and download</p>
-          <h2>Any place, any dates</h2>
-          <p class="sub">Click the map to centre your area, pick a radius and a date range, then download the original NASA detections and the calendar.</p>
-        </div>
-        <div class="exgrid">
-          <div class="card mapcard">
-            <div id="map" role="application" aria-label="Map: click to choose the centre of your area"></div>
-            <div class="maplegend">
-              <span><i style="background:var(--s-modis)"></i>MODIS (old sensor)</span>
-              <span><i style="background:var(--s-npp)"></i>VIIRS S-NPP (new)</span>
-              <span><i style="background:var(--s-n20)"></i>VIIRS NOAA-20 (newest)</span>
-            </div>
-          </div>
-          <div class="card controls">
-            <h3 id="placename">Whole region</h3>
-            <p class="note" id="placesub"></p>
-            <p id="exverdict" style="margin:0 0 14px"></p>
-            <label class="ctl"><span>Radius around the clicked point</span>
-              <span class="radius"><input type="range" id="radius" min="5" max="60" step="5" value="25" /><output id="radiusout">25 km</output></span>
-            </label>
-            <div class="ctl two">
-              <label><span>From</span><input type="month" id="from" /></label>
-              <label><span>To</span><input type="month" id="to" /></label>
-            </div>
-            <p class="note" id="mapinfo"></p>
-            <div class="dlrow">
-              <button id="dl-hot" type="button" class="primary">Download detections (CSV)</button>
-              <button id="dl-cal" type="button">Download calendar (CSV)</button>
-              <button id="dl-svg" type="button">Download fire clock (SVG)</button>
-              <button id="dl-meta" type="button">Sources &amp; method (JSON)</button>
-            </div>
-            <p class="note" id="dlinfo"></p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="band">
+    <section class="band alt">
       <div class="wrap">
         <div class="sechead"><p class="kicker">How it works</p><h2>Four steps from raw detections to one record</h2></div>
         <ol class="steps">

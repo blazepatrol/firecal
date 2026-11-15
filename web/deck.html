@@ -44,6 +44,9 @@
   .three p, .three li { color: #c9cfd6; font-size: 18px; }
   .three ul { margin: 0; padding-left: 1.1em; }
   .hidden { display: none !important; }
+  .pts { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; font-size: 17px; color: var(--ink-2); }
+  .pts li { padding-left: 16px; border-left: 3px solid var(--accent); }
+  .pts b { color: var(--ink); }
   .feats { display: flex; gap: 12px; margin-top: auto; }
   .feats span { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; font-size: 17px; font-weight: 600; }
   .insights-big h3 { font-size: 22px; }
@@ -59,8 +62,8 @@
   <div class="cols c2" style="grid-template-columns: 1.1fr .9fr">
     <div>
       <p class="kicker">NASA Space Apps Challenge 2026 · Harmonization of MODIS and VIIRS Hot Spots</p>
-      <h1>Is this fire season normal?</h1>
-      <p class="lead" style="margin-top:22px">FireCal turns 25 years of NASA satellite fire records into one comparable calendar, for any place.</p>
+      <h1 style="font-size:60px">What's burning in your area, and is it unusual?</h1>
+      <p class="lead" style="margin-top:22px">FireCal joins 25 years of NASA fire detections from two generations of satellites into one burning calendar, so emergency analysts can tell a normal week from an alarming one.</p>
       <p style="margin-top:40px;font-size:20px"><b>Team BlazePatrol</b> · Evan Girard-Sun<br/><span style="color:#9aa3ad">Houston, Texas</span></p>
     </div>
     <div class="clockcard"><div id="clock"></div></div>
@@ -71,7 +74,7 @@
 <section class="slide">
   <p class="kicker">The problem</p>
   <h2><span class="jump" id="jump"></span>In 2012, burning seemed to jump overnight.</h2>
-  <p class="lead">It didn't. NASA's new VIIRS sensor sees small fires the older MODIS misses. Add up the raw detections and 25 years of fire history can't be compared.</p>
+  <p class="lead">It didn't. The new VIIRS sensor sees small fires the older MODIS misses. MODIS is now retiring: without a way to compare the two, the first decade of fire history is lost.</p>
   <div class="story-chart" id="story-raw"></div>
   <span class="pg">2 / 7</span>
 </section>
@@ -97,16 +100,17 @@
 </section>
 
 <section class="slide" style="background:#f6f7f9">
-  <p class="kicker">The answer, instantly</p>
-  <h2>Pick a place. Get a plain answer.</h2>
-  <div class="cols c2" style="align-items:start;margin-top:8px;grid-template-columns:1.05fr .95fr">
-    <article class="answer" id="answer" style="zoom:1.18"></article>
-    <div class="insights insights-big"><h3>What the calendar says</h3><ul id="insights"></ul></div>
-  </div>
-  <div class="feats">
-    <span>📍 Presets, or click anywhere on the map</span>
-    <span>🗓️ November 2000 to today, month by month</span>
-    <span>📥 Download the original NASA detections</span>
+  <p class="kicker">The tool</p>
+  <h2>One screen: what's burning, is it unusual, what's next.</h2>
+  <div class="cols" style="grid-template-columns:2.2fr 1fr;align-items:start;margin-top:4px;gap:32px">
+    <img src="tool.jpg" alt="FireCal: map of this week's fires beside the answer panel" style="width:100%;aspect-ratio:1280/700;object-fit:cover;object-position:bottom;border-radius:12px;border:1px solid var(--line);box-shadow:0 12px 40px rgba(20,24,29,.16)" />
+    <ul class="pts">
+      <li><b>This week's fires</b> on the map, with where the wind carries their smoke</li>
+      <li><b>Unusual areas</b> flagged against the same weeks in every earlier year</li>
+      <li><b>A plain verdict</b> for any searched or clicked area: this month vs the 25-year median</li>
+      <li><b>Wind, humidity</b> and a 5-day fire-spread outlook</li>
+      <li><b>Downloads</b>: the original NASA detections and the calendar, for any dates</li>
+    </ul>
   </div>
   <span class="pg">5 / 7</span>
 </section>
@@ -125,9 +129,9 @@
   <p class="kicker">Impact</p>
   <h2 style="color:#fff">One honest fire record, from MODIS to VIIRS and beyond.</h2>
   <div class="cols c3 three" style="margin-top:20px">
-    <div><h3>Who it helps</h3><ul><li>Emergency managers checking if this month is unusual</li><li>Foresters planning prescribed burns</li><li>Scientists studying 25-year trends</li></ul></div>
+    <div><h3>Who it helps</h3><ul><li>Early-warning and emergency analysts watching an area</li><li>Land managers planning prescribed burns</li><li>Scientists studying 25-year trends</li></ul></div>
     <div><h3>Why now</h3><p>MODIS is near the end of its life, and Suomi NPP VIIRS stopped on 2 November 2026. Without harmonization the fire record keeps splitting.</p></div>
-    <div><h3>What's next</h3><ul><li>Any region in the world</li><li>NOAA-20 and NOAA-21 side by side</li><li>Cloud-aware coverage from daily fire masks</li><li>"Unusual month" alerts</li></ul></div>
+    <div><h3>What's next</h3><ul><li>Any region in the world: the method only needs FIRMS</li><li>Hourly refresh of new detections</li><li>Cloud-aware coverage from daily fire masks</li><li>Alerts when an area turns unusual</li></ul></div>
   </div>
   <p style="margin-top:auto;font-size:22px">Try it: <b>blazepatrol.github.io/firecal</b></p>
   <p style="color:#9aa3ad;font-size:14px;margin:4px 0 0">Data: NASA FIRMS (MODIS Collection 6.1, VIIRS 375 m Collection 2). Basemap © Esri, © OpenStreetMap contributors.</p>
@@ -136,7 +140,7 @@
 
 </div>
 <div class="hidden">
-  <div id="places"></div><div id="legend"></div><div id="detail"></div><div id="storychart"></div><div id="storycap"></div><div id="cap-raw"></div>
+  <div id="places"></div><div id="legend"></div><div id="answer"></div><ul id="insights"></ul><div id="detail"></div><div id="storychart"></div><div id="storycap"></div><div id="cap-raw"></div>
   <span id="updated"></span><div id="tech"></div><div id="foot"></div>
 </div>
 <div id="tip" class="tip" hidden></div>

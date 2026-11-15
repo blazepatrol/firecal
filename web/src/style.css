@@ -152,3 +152,65 @@ details.tech { margin-top: 22px; }
 .clock.anim svg .cell { animation: ringin .5s ease-out both; }
 @keyframes ringin { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce), print { .clock.anim svg .cell { animation: none; } }
+
+/* ---------- tool layout: intro + search, then map beside the answer panel ---------- */
+.hero { padding: 18px 0 26px; }
+.hero h1 { font-size: clamp(30px, 3.6vw, 44px); margin-top: 22px; max-width: 20em; }
+.lede { font-size: 17px; margin: 10px 0 18px; max-width: 46em; }
+.search { display: flex; gap: 8px; flex-wrap: wrap; max-width: 760px; }
+.search input { flex: 1 1 280px; height: 48px; border-radius: 12px; border: 0; padding: 0 16px; font-size: 16px; background: #fff; }
+.search button { height: 48px; border-radius: 12px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.06); color: #fff; padding: 0 16px; font-weight: 600; font-size: 15px; }
+.search button.go { background: var(--accent); border-color: var(--accent); }
+.search button:hover { filter: brightness(1.08); }
+.places { margin-top: 12px; }
+.places button { padding: 6px 12px; font-size: 13.5px; }
+.hint { margin: 10px 0 0; }
+
+.app { display: grid; grid-template-columns: minmax(0, 1fr) 500px; gap: 20px; align-items: start; padding-top: 20px; padding-bottom: 48px; max-width: 1360px; }
+.mapside { position: sticky; top: 12px; }
+#map { height: calc(100vh - 110px); min-height: 420px; border-radius: var(--radius); border: 1px solid var(--line); }
+.maplegend { padding: 8px 2px 0; gap: 4px 14px; }
+.maplegend .brk { flex-basis: 100%; color: var(--ink); }
+.maplegend i.fire { background: #f09b8e; } .maplegend i.fire.new { background: #d03b3b; }
+.maplegend i.tile { border-radius: 2px; box-shadow: none; opacity: .75; width: 13px; height: 13px; vertical-align: -2px; }
+.maplegend i.wedge { border-radius: 0; box-shadow: none; background: none; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 12px solid rgba(208,59,59,.45); vertical-align: -1px; }
+.panel { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.panel .card { padding: 18px 20px; }
+.panel h3 { font-size: 17px; }
+.cardhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.cardhead .viewtoggle { margin: 0; }
+
+.answer.card { border-radius: var(--radius); box-shadow: var(--shadow); }
+.answer .where { font-size: 15px; }
+.answer .verdict { margin: 4px 0 2px; gap: 10px; }
+.answer .word { font-size: 34px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.answer .mult { font-size: 20px; font-weight: 700; letter-spacing: 0; }
+.answer .exp { margin: 6px 0 10px; }
+.answer .exp b { color: var(--ink); }
+.minicap { font-size: 12.5px; color: var(--ink-3); margin-top: 4px; }
+
+.now h3 { margin-bottom: 10px; }
+.nowrow { display: flex; align-items: center; gap: 14px; font-size: 14.5px; color: var(--ink-2); margin-bottom: 12px; }
+.nowrow b { color: var(--ink); }
+.bignum { font-size: 40px; font-weight: 800; letter-spacing: -.03em; line-height: 1; color: #d03b3b; min-width: 48px; text-align: center; font-variant-numeric: tabular-nums; }
+.arrow { display: inline-grid; place-items: center; width: 48px; height: 48px; flex: none; border-radius: 50%; background: var(--alt); border: 1px solid var(--line); font-size: 24px; font-weight: 700; color: var(--ink); }
+.spread { border-radius: 10px; padding: 9px 12px; font-size: 15px; font-weight: 500; }
+.days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 10px; text-align: center; font-size: 12.5px; color: var(--ink-2); }
+.days div { display: flex; flex-direction: column; gap: 3px; }
+.days b { border-radius: 7px; padding: 3px 0; font-size: 12.5px; }
+.days small { font-size: 11.5px; color: var(--ink-3); }
+
+.calcard .legend { justify-content: flex-start; font-size: 12.5px; gap: 6px 14px; margin: 8px 0 12px; }
+.calcard .detail { min-height: 0; }
+ul.insights { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 10px; }
+ul.insights li { font-size: 14.5px; }
+.controls .ctl { margin-top: 12px; }
+.dlrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.dlrow button { text-align: center; padding: 0 8px; }
+
+@media (max-width: 960px) {
+  .app { grid-template-columns: 1fr; }
+  .mapside { position: static; }
+  #map { height: 420px; }
+}
+@media (max-width: 560px) { #map { height: 340px; } .answer .word { font-size: 28px; } .search button { flex: 1; } }

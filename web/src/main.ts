@@ -40,9 +40,9 @@ const allIds = () => new Set(blocks.map((b) => b.id));
 let selected = allIds(), placeName: string = meta.region.short, placeSub: string = meta.region.name, placeKey = "all";
 let from = M[0], to = M[T - 1];
 let rows: Row[] = [];
-let calView: "clock" | "grid" = "clock";
-let storyMode: "raw" | "harm" = "raw";
 const DECK = "deck" in document.body.dataset; // deck.html reuses these renderers without the map
+let calView: "clock" | "grid" = DECK ? "clock" : "grid";
+let storyMode: "raw" | "harm" = "raw";
 const txt = (id: string, v: string) => { const e = document.getElementById(id); if (e) e.textContent = v; };
 
 // ---------------- data ----------------
@@ -126,8 +126,7 @@ function classify(v: number, med: number | null, month: string) {
 }
 function drawAnswer() {
   const tf = lastFull(), r = rows[tf], mon = MONTH[+r.month.slice(5) - 1];
-  const head = `<div class="where">${placeName}</div><div class="q">${mon} ${r.month.slice(0, 4)}, compared with every ${mon} since 2001</div>`;
-  if (r.value === null) { $("answer").innerHTML = head + `<p class="exp">No observation for this month.</p>`; return; }
+  if (r.value === null) { $("answer").innerHTML = `<div class="where">${placeName}</div><p class="exp">No observation for ${mon}.</p>`; return; }
   const c = classify(r.value, r.median, r.month);
   const same = rows.filter((x) => x.month.slice(5) === r.month.slice(5) && x.month >= "2001");
   const w = 440, h = 96, b = 16, max = Math.max(1, ...same.map((x) => x.value ?? 0), r.median ?? 0), bw = w / same.length;
@@ -141,9 +140,14 @@ function drawAnswer() {
   svg += `<text x="0" y="${h - 2}">${same[0].month.slice(0, 4)}</text><text x="${w}" y="${h - 2}" text-anchor="end">${same.at(-1)!.month.slice(0, 4)}</text></svg>`;
   const cur = rows[T - 1];
   let sofar = "";
-  if (cur.partial && cur.value !== null && cur.median !== null)
-    sofar = `<div class="sofar"><b>${MONTH[+cur.month.slice(5) - 1]} so far</b> (through ${dname(meta.observations_through)}): ${fmt(cur.value)}, vs ${fmt(cur.median * OBS_FRAC)} typical by this date.</div>`;
-  $("answer").innerHTML = head + `<div class="verdict"><span class="mult" style="color:${c.tone}">${c.mult}</span><span class="word" style="color:${c.tone}">${c.word}</span></div><p class="exp">${c.exp}</p>${svg}${sofar}`;
+  if (cur.partial && cur.value !== null && cur.median !== null) {
+    const typ = cur.median * OBS_FRAC, cc = classify(cur.value, typ, cur.month);
+    sofar = `<div class="sofar"><b>${MONTH[+cur.month.slice(5) - 1]} so far</b> (to ${dname(meta.observations_through)}): ${fmt(cur.value)} vs ${fmt(typ)} typical by this date · <b style="color:${cc.tone}">${cc.word}</b></div>`;
+  }
+  $("answer").innerHTML = `<div class="where">${placeName}</div>
+    <div class="verdict"><span class="word" style="color:${c.tone}">${c.word}</span>${c.mult.endsWith("×") ? `<span class="mult" style="color:${c.tone}">${c.mult} typical</span>` : ""}</div>
+    <p class="exp"><b>${mon} ${r.month.slice(0, 4)}:</b> ${c.exp}</p>${svg}<div class="minicap">Every ${mon} since 2001. Dashed line = typical.</div>${sofar}
+    <div class="minicap">A km²-day is one square kilometre with fire detected on one day.</div>`;
 }
 function drawPlaces() {
   const presets: Record<string, number[]> = meta.region.presets;
@@ -238,18 +242,18 @@ function drawClock() {
   s += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" style="font-size:14px;font-weight:700;fill:#14181d">${nm}</text><text x="${cx}" y="${cy + 15}" text-anchor="middle">2001 → ${years.at(-1)}</text></svg>`;
   $("clock").innerHTML = s;
   bindCells($("clock"));
-  $("legend").innerHTML = `<span class="ramp">quieter<span class="bar">${RED.map((c) => `<i style="background:${c}"></i>`).join("")}</span>busier month (for this area)</span>
-    <span><span class="sw" style="background:#fff"></span>none detected</span>
-    <span><span class="sw" style="background:repeating-linear-gradient(45deg,#eef0f2 0 3px,#c9ced5 3px 5px)"></span>no satellite record</span>
-    <span><svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke="#14181d" stroke-width="1.4" stroke-dasharray="4 3"/></svg> inside the 2012 ring: rebuilt from MODIS</span>`;
 }
 function drawGrid() {
   const years = [...new Set(M.map((m) => m.slice(0, 4)))];
   const color = scale(rows.map((r) => r.value));
-  const cw = 44, ch = 19, left = 46, top = 20, Wd = left + 12 * cw + 4, Ht = top + years.length * ch + 4;
+  const cw = 38, ch = 19, left = 46, top = 20, bx = left + 12 * cw + 10, bwid = 78, Wd = bx + bwid + 4, Ht = top + years.length * ch + 4;
+  const tot = years.map((y) => rows.filter((r) => r.month.startsWith(y) && r.value !== null).reduce((a, r) => a + r.value!, 0)), tmax = Math.max(1, ...tot);
   let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${Wd} ${Ht}" width="${Wd}" role="img" aria-label="Monthly burning grid"><defs>${HATCH}</defs><rect width="${Wd}" height="${Ht}" fill="#fff"/>`;
   MON.forEach((m, i) => (s += `<text class="mo" x="${left + i * cw + cw / 2}" y="13" text-anchor="middle">${m}</text>`));
+  s += `<text class="mo" x="${bx}" y="13">Year total</text>`;
   years.forEach((y, yi) => {
+    s += `<rect x="${bx}" y="${top + yi * ch + 3}" width="${(tot[yi] / tmax) * bwid}" height="${ch - 6}" rx="2" fill="${tot[yi] === tmax ? "#9a241f" : "#c3c9d0"}"><title>${y}: ${fmt(tot[yi])} ${UNIT}</title></rect>`;
+    if (y === "2012") s += `<line x1="${left}" x2="${Wd - 4}" y1="${top + yi * ch}" y2="${top + yi * ch}" stroke="#14181d" stroke-width="1.2" stroke-dasharray="4 3"/>`;
     s += `<text x="${left - 8}" y="${top + yi * ch + 13}" text-anchor="end" style="font-weight:${y === "2012" ? 700 : 500}">${y}</text>`;
     for (let m = 0; m < 12; m++) {
       const r = rows.find((x) => x.month === `${y}-${String(m + 1).padStart(2, "0")}`);
@@ -260,7 +264,13 @@ function drawGrid() {
   $("clock").innerHTML = s + "</svg>";
   bindCells($("clock"));
 }
-const drawCalendar = () => (calView === "clock" ? drawClock() : drawGrid());
+function drawCalendar() {
+  if (calView === "clock") drawClock(); else drawGrid();
+  $("legend").innerHTML = `<span class="ramp">quieter<span class="bar">${RED.map((c) => `<i style="background:${c}"></i>`).join("")}</span>busier month (for this area)</span>
+    <span><span class="sw" style="background:#fff"></span>none detected</span>
+    <span><span class="sw" style="background:repeating-linear-gradient(45deg,#eef0f2 0 3px,#c9ced5 3px 5px)"></span>no satellite record</span>
+    <span><svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke="#14181d" stroke-width="1.4" stroke-dasharray="4 3"/></svg> ${calView === "clock" ? "inside the 2012 ring" : "above the dashed line"}: rebuilt from the older satellite</span>`;
+}
 
 // ---------------- story chart ----------------
 function drawStory() {
@@ -401,19 +411,112 @@ async function selectedHotspots() {
   for (const p of parts) for (const r of p.slice(1)) { const m = r[iD].slice(0, 7); if (m >= from && m <= to && selected.has(+r[iB])) out.push(r); }
   return { header, rows: out };
 }
-let hotToken = 0;
-async function drawHotspots() {
-  if (DECK) return;
-  const tk = ++hotToken, { header, rows: hs } = await selectedHotspots();
-  if (tk !== hotToken) return;
-  hotLayer.clearLayers();
-  const iLat = header.indexOf("lat"), iLon = header.indexOf("lon"), iP = header.indexOf("platform"), iU = header.indexOf("used");
-  const used = hs.filter((r) => r[iU] === "1"), step = Math.max(1, Math.ceil(used.length / 10000)), dense = used.length > 3000;
-  for (let i = 0; i < used.length; i += step) {
-    const r = used[i], p = r[iP];
-    L.circleMarker([+r[iLat], +r[iLon]], { interactive: false, radius: dense ? 1.8 : 3, weight: dense ? 0 : 0.8, color: "#fff", fillOpacity: dense ? 0.55 : 0.9, fillColor: p === "S-NPP" ? C.npp : p === "NOAA-20" ? C.n20 : C.modis }).addTo(hotLayer);
+
+// ---------------- right now: recent fires, unusual tiles, weather ----------------
+type Fire = { lat: number; lon: number; date: string; time: string; frp: number; platform: string; block: number; age: number };
+let recent: Fire[] = [];
+const recentLayer = L.layerGroup(), tileLayer = L.layerGroup(), windLayer = L.layerGroup();
+if (map) { tileLayer.addTo(map); windLayer.addTo(map); recentLayer.addTo(map); }
+const RECENT_DAYS = 7, NEW_DAYS = 2;
+async function loadRecent() {
+  // ponytail: reads the latest year's file only, so the 7-day window is short in the first week of January
+  const all = await hotYear(LAST_YEAR), h = all[0] ?? [], ix = (k: string) => h.indexOf(k);
+  const end = Date.parse(`${meta.observations_through}T23:59Z`);
+  recent = all.slice(1).filter((r) => r[ix("used")] === "1").map((r) => {
+    const time = r[ix("time")].padStart(4, "0");
+    return { lat: +r[ix("lat")], lon: +r[ix("lon")], date: r[ix("date")], time, frp: +r[ix("frp")] || 0, platform: r[ix("platform")], block: +r[ix("block")],
+      age: (end - Date.parse(`${r[ix("date")]}T${time.slice(0, 2)}:${time.slice(2)}Z`)) / 864e5 };
+  }).filter((f) => f.age < RECENT_DAYS).sort((a, b) => b.age - a.age);
+  for (const f of recent) {
+    const fresh = f.age < NEW_DAYS;
+    L.circleMarker([f.lat, f.lon], { radius: 5 + Math.min(6, Math.sqrt(f.frp)), color: "#fff", weight: 1.5, fillColor: fresh ? "#d03b3b" : "#f09b8e", fillOpacity: 0.95 })
+      .bindTooltip(`Fire detected ${dname(f.date)}, ${f.time.slice(0, 2)}:${f.time.slice(2)} UTC<br/>${f.platform} · intensity ${f.frp.toFixed(1)} MW`).addTo(recentLayer);
   }
-  $("mapinfo").textContent = `${hs.length.toLocaleString()} NASA detections in this area, ${mname(from)} – ${mname(to)}${step > 1 ? ` (map shows 1 in ${step}; downloads include all)` : ""}. Industrial flares and low-confidence detections are in the download but not counted.`;
+}
+// Tiles: is burning since the start of last month unusual for this block, against the same weeks in earlier years?
+function drawTiles() {
+  const part = OBS_FRAC < 1, idx = part ? [T - 2, T - 1] : [T - 1];
+  for (const b of blocks) {
+    const cal = monthly.blocks[b.id].cal, cur = idx.reduce((a, i) => a + (cal[i] ?? NaN), 0);
+    const hist: number[] = [];
+    for (let k = 1; idx[0] - 12 * k >= 0; k++) { const v = idx.reduce((a, i) => a + (cal[i - 12 * k] ?? NaN) * (part && i === T - 1 ? OBS_FRAC : 1), 0); if (!Number.isNaN(v)) hist.push(v); }
+    if (Number.isNaN(cur) || hist.length < 10) continue;
+    const rank = hist.filter((v) => v < cur).length / hist.length;
+    // ponytail: fixed rank and count thresholds; counts per 10 km block are small, so one or two detections are never flagged
+    const cls = cur >= 3 && rank >= 0.9 ? 2 : cur >= 2 && rank >= 0.7 ? 1 : 0;
+    if (!cls) continue;
+    const [w0, s0, e0, n0] = b.bounds;
+    L.rectangle([[s0, w0], [n0, e0]], { stroke: false, fillColor: cls === 2 ? "#bf3229" : "#f0a04b", fillOpacity: 0.42, interactive: false }).addTo(tileLayer);
+  }
+  return `since 1 ${MON[+M[idx[0]].slice(5) - 1]}`;
+}
+const selCentre = (): [number, number] => {
+  if (placeKey === "custom" && lastClick) return [lastClick.lat, lastClick.lng];
+  const cs = blocks.filter((b) => selected.has(b.id)).map(centre);
+  return [cs.reduce((a, c) => a + c[1], 0) / cs.length, cs.reduce((a, c) => a + c[0], 0) / cs.length];
+};
+// Plain rule, stated in Technical details: afternoon humidity, wind and the day's rain.
+function spread(rh: number, wind: number, rain: number) {
+  if (rain >= 0.1) return { word: "Low", tone: "#0a7d0a", bg: "#e7f4e7" };
+  if (rh < 30 && wind >= 15) return { word: "High", tone: "#b42323", bg: "#fde4e4" };
+  if ((rh < 40 && wind >= 10) || rh < 25) return { word: "Elevated", tone: "#a34a12", bg: "#fdeee0" };
+  return { word: "Low", tone: "#0a7d0a", bg: "#e7f4e7" };
+}
+let nowToken = 0;
+async function drawNow() {
+  if (DECK) return;
+  const tk = ++nowToken, mine = recent.filter((f) => selected.has(f.block)), fresh = mine.filter((f) => f.age < NEW_DAYS);
+  const fires = `<h3>Right now</h3><div class="nowrow"><span class="bignum">${mine.length}</span><span><b>fire detection${mine.length === 1 ? "" : "s"} here in the last ${RECENT_DAYS} days</b><br/>${fresh.length} in the last ${NEW_DAYS} days · satellite passes to ${dname(meta.observations_through)}</span></div>`;
+  $("now").innerHTML = fires + `<p class="note">Loading weather…</p>`;
+  windLayer.clearLayers();
+  const [lat, lon] = selCentre();
+  let wx = `<p class="note">Weather is unavailable right now.</p>`;
+  try {
+    const j = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(3)}&longitude=${lon.toFixed(3)}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=relative_humidity_2m,wind_speed_10m,precipitation&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch&timezone=auto&forecast_days=5`).then((r) => r.json());
+    if (tk !== nowToken) return;
+    const c = j.current, H = j.hourly, days = [...new Set((H.time as string[]).map((t) => t.slice(0, 10)))];
+    const daily = days.map((d) => {
+      let rh = 100, wind = 0, rain = 0;
+      (H.time as string[]).forEach((t, i) => { if (!t.startsWith(d)) return; rain += H.precipitation[i] ?? 0; const hr = +t.slice(11, 13); if (hr >= 12 && hr <= 18) { rh = Math.min(rh, H.relative_humidity_2m[i]); wind = Math.max(wind, H.wind_speed_10m[i]); } });
+      return { d, rh, wind, ...spread(rh, wind, rain) };
+    });
+    const dir = c.wind_direction_10m, from = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(dir / 45) % 8], t0 = daily[0];
+    wx = `<div class="nowrow"><span class="arrow" style="transform:rotate(${dir + 180}deg)" title="Wind is blowing this way">↑</span><span><b>Wind ${Math.round(c.wind_speed_10m)} mph from the ${from}</b>, gusts ${Math.round(c.wind_gusts_10m)}<br/>Humidity ${Math.round(c.relative_humidity_2m)}% · ${Math.round(c.temperature_2m)}°F</span></div>
+      <div class="spread" style="background:${t0.bg};color:${t0.tone}">Fire-spread conditions today: <b>${t0.word}</b></div>
+      <div class="days">${daily.map((x, i) => `<div><span>${i ? new Date(`${x.d}T12:00`).toLocaleDateString("en-US", { weekday: "short" }) : "Today"}</span><b style="background:${x.bg};color:${x.tone}">${x.word}</b><small>${Math.round(x.rh)}% · ${Math.round(x.wind)} mph</small></div>`).join("")}</div>
+      <p class="note">Each day shows afternoon humidity and wind. A simple, stated rule, not an official forecast: check the National Weather Service for Red Flag Warnings. Weather: Open-Meteo.</p>`;
+    // where one hour of this wind would carry smoke and embers from the newest fires
+    const km = Math.max(3, c.wind_speed_10m * 1.609), to = ((dir + 180) * Math.PI) / 180;
+    const dest = (f: Fire, a: number): [number, number] => [f.lat + (km * Math.cos(a)) / KY, f.lon + (km * Math.sin(a)) / KX];
+    for (const f of fresh) L.polygon([[f.lat, f.lon], dest(f, to - 0.26), dest(f, to + 0.26)], { color: "#d03b3b", weight: 1, fillColor: "#d03b3b", fillOpacity: 0.16, interactive: false }).addTo(windLayer);
+  } catch { if (tk !== nowToken) return; }
+  $("now").innerHTML = fires + wx;
+}
+
+// ---------------- search ----------------
+if (map) {
+  const say = (m: string) => ($("searchmsg").textContent = m);
+  const goTo = (ll: L.LatLng | null, what: string) => {
+    if (!ll || ll.lng < W || ll.lng > E || ll.lat < S || ll.lat > N) { say(`Couldn't find ${what} inside ${meta.region.short}. Try a town name, or click the map.`); return; }
+    say("Or click anywhere on the map.");
+    chooseCircle(ll); map.setView(ll, 10); $("app").scrollIntoView({ behavior: "smooth" });
+  };
+  $<HTMLFormElement>("search").onsubmit = async (e) => {
+    e.preventDefault();
+    const q = $<HTMLInputElement>("q").value.trim(), m = q.match(/^(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)$/);
+    if (!q) return;
+    let ll: L.LatLng | null = m ? L.latLng(+m[1], +m[2]) : null;
+    if (!m) try { // place search: OpenStreetMap Nominatim, limited to the region
+      const j = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&bounded=1&viewbox=${W},${N},${E},${S}&q=${encodeURIComponent(q)}`).then((r) => r.json());
+      if (j[0]) ll = L.latLng(+j[0].lat, +j[0].lon);
+    } catch { /* falls through to "couldn't find" */ }
+    goTo(ll, `"${q}"`);
+  };
+  $("locate").onclick = () => {
+    if (!navigator.geolocation) return say("This browser can't share a location. Search or click the map instead.");
+    say("Finding you…");
+    navigator.geolocation.getCurrentPosition((p) => goTo(L.latLng(p.coords.latitude, p.coords.longitude), "your location"), () => say("Location wasn't shared. Search or click the map instead."));
+  };
 }
 
 // ---------------- downloads ----------------
@@ -451,10 +554,11 @@ function drawStatic() {
   <p><b>What counts.</b> Detections that are not low confidence and not static sources such as refinery flares (FIRMS type 2). Excluded records stay in the downloads.</p>
   <p><b>The model.</b> A seasonal Poisson regression gives a baseline; gradient-boosted trees learn a correction from MODIS activity, Terra and Aqua separately, neighbouring areas, the months before and after, fire intensity, season and location. Beyond the largest training values the top-of-range ratio is held constant.</p>
   <p><b>Testing.</b> Leave-one-year-out over the overlap years, against raw MODIS and a single ratio. The monthly error measure was fixed before results; whichever method wins is used before 2012.</p>
+  <p><b>Map and weather.</b> Map squares compare burning in each 10 km block since the start of last month with the same weeks in every earlier year: "busier" is above 70% of those years, "far busier" above 90%. Fire-spread conditions use afternoon (12:00–18:00) forecast values: High if humidity is under 30% with wind of 15 mph or more; Elevated if humidity is under 40% with wind of 10 mph or more, or humidity under 25%; Low otherwise or with 0.1 in of rain. The wedges show one hour of travel at the current wind. This is an indicator, not a spread model.</p>
   <p><b>Limits.</b> Clouds and smoke hide fires from every sensor. Pre-2012 estimates assume the 2012–2026 MODIS–VIIRS relationship held earlier. The newest months use near-real-time data that NASA later reprocesses.</p>`;
   $("foot").innerHTML = `<b>FireCal</b> · Team BlazePatrol · NASA Space Apps Challenge 2026, <i>Harmonization of MODIS and VIIRS Hot Spots</i><br/>
   <a href="deck.html" style="color:inherit">7-slide summary</a> (<a href="FireCal-deck.pdf" style="color:inherit">PDF</a>) · <a href="https://github.com/blazepatrol/firecal" style="color:inherit">Source code</a>, Apache-2.0<br/>
-  Data: NASA Fire Information for Resource Management System (FIRMS), part of NASA LANCE and ESDIS. Basemap © Esri, © OpenStreetMap contributors. Place names © OpenStreetMap (Nominatim).`;
+  Data: NASA Fire Information for Resource Management System (FIRMS), part of NASA LANCE and ESDIS. Basemap © Esri, © OpenStreetMap contributors. Place search © OpenStreetMap (Nominatim). Weather: Open-Meteo.`;
 }
 
 // ---------------- controls ----------------
@@ -472,22 +576,26 @@ if (!DECK) {
   const fromEl = $<HTMLInputElement>("from"), toEl = $<HTMLInputElement>("to");
   for (const el of [fromEl, toEl]) { el.min = M[0]; el.max = M[T - 1]; }
   fromEl.value = from; toEl.value = to;
-  fromEl.onchange = toEl.onchange = () => { from = fromEl.value || M[0]; to = toEl.value || M[T - 1]; if (from > to) [from, to] = [to, from]; drawHotspots(); };
+  fromEl.onchange = toEl.onchange = () => { from = fromEl.value || M[0]; to = toEl.value || M[T - 1]; if (from > to) [from, to] = [to, from]; };
 }
 
 function render() {
   rows = computeRows();
-  txt("calhead", `${placeName}: 25 years of burning, month by month`);
-  txt("placename", placeName);
-  txt("placesub", placeSub);
-  drawPlaces(); drawAnswer(); drawCalendar(); drawInsights(); drawStory(); drawHotspots();
-  const lf = rows[lastFull()], ev = document.getElementById("exverdict"); // verdict beside the map (not in the deck)
-  if (ev) { const c = lf.value === null ? null : classify(lf.value, lf.median, lf.month); ev.innerHTML = c ? `${mname(lf.month)}: <b style="color:${c.tone}">${c.mult} · ${c.word}</b> &nbsp;<a href="#">Full answer ↑</a>` : ""; }
-  $("detail").innerHTML = detailHtml(lf) + `<div class="note" style="margin-top:6px">Hover any month for its details.</div>`;
+  txt("calhead", `Burning calendar · ${placeName}`);
+  drawPlaces(); drawAnswer(); drawCalendar(); drawInsights(); drawStory(); drawNow();
+  $("detail").innerHTML = detailHtml(rows[lastFull()]) + `<div class="note" style="margin-top:6px">Hover any month for its details.</div>`;
 }
 drawStatic();
 drawTrust();
-if (DECK) deck(); else render();
+if (DECK) deck();
+else {
+  const since = drawTiles();
+  $("maplegend").innerHTML = `<span><i class="fire new"></i>Fire detected in the last ${NEW_DAYS} days</span><span><i class="fire"></i>${NEW_DAYS + 1} to ${RECENT_DAYS} days ago</span>
+    <span><i class="wedge"></i>Where an hour of wind carries smoke</span>
+    <span class="brk"><b>Burning ${since}, against the same weeks in earlier years:</b></span><span><i class="tile" style="background:#f0a04b"></i>busier than usual</span><span><i class="tile" style="background:#bf3229"></i>far busier than usual</span>`;
+  await loadRecent();
+  render();
+}
 
 function deck() {
   // Slide 6: the two presets whose peak months differ most
