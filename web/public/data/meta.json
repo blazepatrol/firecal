@@ -1,0 +1,140 @@
+{
+ "method_version": "firecal-2026.1",
+ "generated_utc": "2026-11-15T02:11Z",
+ "data": "NASA FIRMS active fire hotspots (real data, not synthetic)",
+ "region": {
+  "id": "houston",
+  "name": "Greater Houston and the Sam Houston National Forest, Texas",
+  "short": "Greater Houston",
+  "bbox": [
+   -96.2,
+   29.0,
+   -94.6,
+   30.9
+  ],
+  "focus": [
+   -95.3698,
+   29.7604,
+   "Houston"
+  ],
+  "presets": {
+   "Houston core (\u00b125 km)": [
+    -95.63,
+    29.535,
+    -95.11,
+    29.985
+   ],
+   "Sam Houston National Forest": [
+    -95.75,
+    30.3,
+    -95.0,
+    30.8
+   ],
+   "Coastal prairie (Katy\u2013Brazoria)": [
+    -96.2,
+    29.0,
+    -95.4,
+    29.9
+   ]
+  },
+  "events": {
+   "2011": "2011 drought",
+   "2023": "2023 drought"
+  }
+ },
+ "n_hotspots": 137565,
+ "n_qualifying": 60642,
+ "grid": {
+  "cell_km": 1,
+  "block_km": 10,
+  "nbx": 16,
+  "nby": 22
+ },
+ "observations_through": "2026-11-14",
+ "sources": {
+  "MODIS_SP": {
+   "product": "MCD14ML",
+   "collection": "C6.1",
+   "processing": "SP",
+   "start": "2000-11-01",
+   "end": "2026-08-31"
+  },
+  "MODIS_NRT": {
+   "product": "MCD14DL",
+   "collection": "C6.1",
+   "processing": "NRT",
+   "start": "2026-09-01",
+   "end": "2026-11-14"
+  },
+  "VIIRS_SNPP_SP": {
+   "product": "VNP14IMGML",
+   "collection": "C2",
+   "processing": "SP",
+   "start": "2012-01-20",
+   "end": "2026-07-31"
+  },
+  "VIIRS_SNPP_NRT": {
+   "product": "VNP14IMGTDL_NRT",
+   "collection": "C2",
+   "processing": "NRT",
+   "start": "2026-08-01",
+   "end": "2026-11-02"
+  },
+  "VIIRS_NOAA20_SP": {
+   "product": "VJ114IMGML",
+   "collection": "C2",
+   "processing": "SP",
+   "start": "2018-04-01",
+   "end": "2026-07-31"
+  },
+  "VIIRS_NOAA20_NRT": {
+   "product": "VJ114IMGTDL_NRT",
+   "collection": "C2",
+   "processing": "NRT",
+   "start": "2026-08-01",
+   "end": "2026-11-14"
+  }
+ },
+ "snpp_end": "2026-11-02",
+ "unit": "active cell-days: 1 km grid cells x days with at least one qualifying hotspot",
+ "qualifying_hotspot": "type not volcano/static/offshore (1,2,3) and confidence not low (MODIS >= 30, VIIRS nominal or high)",
+ "interval_full": [
+  -0.3624010537552664,
+  0.32990313368470414
+ ],
+ "interval_terra": [
+  -0.4655923761139505,
+  0.3493678437916883
+ ],
+ "chosen_full": "gbm",
+ "chosen_terra": "gbm",
+ "hotspot_years": [
+  "2000",
+  "2001",
+  "2002",
+  "2003",
+  "2004",
+  "2005",
+  "2006",
+  "2007",
+  "2008",
+  "2009",
+  "2010",
+  "2011",
+  "2012",
+  "2013",
+  "2014",
+  "2015",
+  "2016",
+  "2017",
+  "2018",
+  "2019",
+  "2020",
+  "2021",
+  "2022",
+  "2023",
+  "2024",
+  "2025",
+  "2026"
+ ]
+}

@@ -1,0 +1,11 @@
+# secrets
+.env
+# local environment and data
+.venv/
+/data/
+__pycache__/
+.pytest_cache/
+web/node_modules/
+web/dist/
+.claude/
+web/.claude/

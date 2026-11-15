@@ -1,0 +1,8 @@
+# Python 3.14. Versions pinned to builds that load under Windows Application Control on the dev machine.
+# Do not install pyarrow here: its DLLs are blocked, and pandas would import it.
+numpy==2.5.4
+pandas==2.3.3
+scikit-learn==1.7.2
+h5py
+requests
+pytest
