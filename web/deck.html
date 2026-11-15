@@ -6,117 +6,128 @@
 <title>FireCal · Demo deck</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
-  body { background: #0b0e12 !important; }
+  * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  body { background: #000 !important; }
   .deckwrap { padding: 24px 0 48px; }
-  .slide { width: 1280px; height: 720px; margin: 0 auto 28px; background: #fff; border-radius: 8px; padding: 56px 72px 48px; position: relative; overflow: hidden; display: flex; flex-direction: column; font-size: 20px; }
-  .slide.dark { color: #f3f4f6; background: radial-gradient(900px 520px at 88% 10%, rgba(232, 87, 63, .28), transparent 60%), radial-gradient(700px 400px at 0% 100%, rgba(42, 120, 214, .14), transparent 60%), linear-gradient(180deg, #0f1318, #1a2028); }
-  .slide .kicker { font-size: 15px; }
-  .slide.dark .kicker { color: #ff9c8a; }
-  .slide h1 { font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -.03em; }
-  .slide h2 { font-size: 44px; line-height: 1.08; font-weight: 800; letter-spacing: -.025em; margin-bottom: 14px; }
+  .slide { width: 1280px; height: 720px; margin: 0 auto 28px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 56px 72px 48px; position: relative; overflow: hidden; display: flex; flex-direction: column; font-size: 20px; isolation: isolate; }
+  .slide h1 { font-size: 108px; line-height: .96; max-width: 7.4em; text-shadow: 0 2px 30px rgba(0,0,0,.5); }
+  .slide h2 { font-size: 54px; line-height: 1; margin-bottom: 14px; }
   .slide .lead { font-size: 22px; color: var(--ink-2); max-width: 900px; margin: 0 0 18px; }
-  .slide.dark .lead { color: #c9cfd6; }
-  .pg { position: absolute; right: 30px; bottom: 20px; font-size: 13px; color: #9aa3ad; }
+  .pg { position: absolute; right: 30px; bottom: 20px; font-size: 13px; color: var(--ink-3); }
   .cols { display: grid; gap: 40px; flex: 1; min-height: 0; align-items: center; }
   .c2 { grid-template-columns: 1fr 1fr; } .c3 { grid-template-columns: repeat(3, 1fr); align-items: start; }
-  .clockcard { background: #fff; border-radius: 18px; padding: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
-  .clockcard svg, .mini-clock svg { width: 100%; height: auto; display: block; }
-  .slide .chart svg { max-height: 430px; }
+  .title .who { margin-top: auto; font-size: 20px; }
+  .title .who span { color: var(--ink-3); }
+  .title .lead { color: #dedcd4; max-width: 30em; margin-top: 22px; }
+  .slide .versus { position: static; padding: 16px 22px; }
+  .slide .vs-panel h3 { font-size: 18px; }
+  .slide .stat { grid-template-columns: 1fr; gap: 6px; border: 0; padding: 0; margin-top: 10px; }
+  .slide .stat b { font-size: 120px; }
+  .slide .stat p { font-size: 20px; }
   .slide .story-chart { flex: 1; min-height: 0; display: flex; align-items: center; }
   .slide .story-chart svg { width: 100%; height: auto; max-height: 440px; }
-  .slide .story-chart text { font: 13px Inter, sans-serif; fill: #4a5360; }
-  .slide .story-chart .lab { font-weight: 600; fill: #14181d; }
-  .jump { display: inline-block; font-size: 64px; font-weight: 800; color: #eb6834; letter-spacing: -.03em; line-height: 1; margin-right: 12px; vertical-align: -6px; }
+  .slide .story-chart text { font: 13px Inter, sans-serif; fill: var(--ink-3); }
+  .slide .story-chart .lab { font-weight: 600; fill: var(--ink); }
   .steps3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 4px 0 8px; }
-  .steps3 div { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 17px; color: var(--ink-2); background: #fbfbfc; }
-  .steps3 b { color: #fff; background: var(--accent); border-radius: 50%; width: 24px; height: 24px; display: inline-grid; place-items: center; font-size: 13px; margin-right: 8px; }
-  #trust { grid-template-columns: 0.75fr 1.25fr; }
-  #trust details { display: none; }
-  #trust .bigstat .num { font-size: 96px; }
-  #answer { box-shadow: 0 16px 50px rgba(20,24,29,.15); border: 1px solid var(--line); }
-  .insights-big li { font-size: 19px; }
-  .mini-clock { max-width: 430px; margin: 0 auto; }
-  .place h3 { font-size: 24px; text-align: center; margin: 0 0 4px; }
-  .place p { text-align: center; font-size: 17px; color: var(--ink-2); margin: 8px auto 0; max-width: 460px; }
-  .three h3 { font-size: 22px; margin-bottom: 8px; color: #fff; }
-  .three p, .three li { color: #c9cfd6; font-size: 18px; }
+  .steps3 div { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 17px; color: var(--ink-2); background: var(--surface); }
+  .steps3 b { color: #14100c; background: var(--ember); border-radius: 50%; width: 24px; height: 24px; display: inline-grid; place-items: center; font-size: 13px; margin-right: 8px; }
+  .slide .pcard { padding: 28px; }
+  .slide .pcard h3 { font-size: 15px; }
+  .slide .pcard .num { font-size: 76px; }
+  .slide .pcard p { font-size: 18px; }
+  .slide .hb { font-size: 17px; }
+  .slide .hbars { gap: 18px; }
+  .mini-clock { max-width: 410px; margin: 0 auto; }
+  .mini-clock svg { width: 100%; height: auto; display: block; border-radius: 14px; }
+  .place h3 { font-size: 24px; text-align: center; margin: 0 0 8px; }
+  .place p { text-align: center; font-size: 17px; color: var(--ink-2); margin: 10px auto 0; max-width: 460px; }
+  .place p b { color: var(--ink); }
+  .three h3 { font-size: 22px; margin-bottom: 8px; }
+  .three p, .three li { color: var(--ink-2); font-size: 18px; }
   .three ul { margin: 0; padding-left: 1.1em; }
-  .hidden { display: none !important; }
   .pts { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; font-size: 17px; color: var(--ink-2); }
-  .pts li { padding-left: 16px; border-left: 3px solid var(--accent); }
+  .pts li { padding-left: 16px; border-left: 3px solid var(--ember); }
   .pts b { color: var(--ink); }
-  .feats { display: flex; gap: 12px; margin-top: auto; }
-  .feats span { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; font-size: 17px; font-weight: 600; }
-  .insights-big h3 { font-size: 22px; }
-  .insights-big li { font-size: 20px; }
-  .insights-big li .ic { width: 40px; height: 40px; font-size: 20px; }
-  @media print { body { background: #fff !important; } .deckwrap { padding: 0; zoom: 1 !important; } .slide { margin: 0; border-radius: 0; page-break-after: always; } @page { size: 1280px 720px; margin: 0; } }
+  .hidden { display: none !important; }
+  @media print { .deckwrap { padding: 0; zoom: 1 !important; } .slide { margin: 0; border: 0; border-radius: 0; page-break-after: always; } @page { size: 1280px 720px; margin: 0; } }
 </style>
 </head>
 <body data-deck>
 <div class="deckwrap">
 
-<section class="slide dark">
-  <div class="cols c2" style="grid-template-columns: 1.1fr .9fr">
-    <div>
-      <p class="kicker">NASA Space Apps Challenge 2026 · Harmonization of MODIS and VIIRS Hot Spots</p>
-      <h1 style="font-size:60px">What's burning in your area, and is it unusual?</h1>
-      <p class="lead" style="margin-top:22px">FireCal joins 25 years of NASA fire detections from two generations of satellites into one burning calendar, so emergency analysts can tell a normal week from an alarming one.</p>
-      <p style="margin-top:40px;font-size:20px"><b>Team BlazePatrol</b> · Evan Girard-Sun<br/><span style="color:#9aa3ad">Houston, Texas</span></p>
-    </div>
-    <div class="clockcard"><div id="clock"></div></div>
-  </div>
+<section class="slide title">
+  <img class="hero-bg" src="night.jpg" alt="" /><canvas id="sky" aria-hidden="true"></canvas><div class="hero-shade"></div>
+  <p class="kicker">NASA Space Apps Challenge 2026 · Harmonization of MODIS and VIIRS Hot Spots</p>
+  <h1>Know when fire stops being normal.</h1>
+  <p class="lead">FireCal compares fire activity in any area with 25 years of NASA satellite records and tells you if it is unusual.</p>
+  <p class="who"><b>Team BlazePatrol</b> · Evan Girard-Sun<br/><span>Houston, Texas</span></p>
   <span class="pg">1 / 7</span>
 </section>
 
 <section class="slide">
-  <p class="kicker">The problem</p>
-  <h2><span class="jump" id="jump"></span>In 2012, burning seemed to jump overnight.</h2>
-  <p class="lead">It didn't. The new VIIRS sensor sees small fires the older MODIS misses. MODIS is now retiring: without a way to compare the two, the first decade of fire history is lost.</p>
-  <div class="story-chart" id="story-raw"></div>
+  <div class="cols" style="grid-template-columns:.8fr 1.2fr;align-items:start">
+    <div>
+      <p class="kicker">The problem</p>
+      <h2>Old and new satellite records don't match.</h2>
+      <div class="stat"><b data-count="jump"></b><p>more burning reported by VIIRS (since 2012) than by MODIS (since 2000), in the same area and the same years. MODIS is retiring. Without a correction, records before 2012 cannot be compared with today.</p></div>
+    </div>
+    <div class="versus" id="versus">
+      <div class="vs-panel" style="border:0;padding-top:0">
+        <h3>Raw records</h3>
+        <div class="stripes" id="stripes-raw"></div>
+        <p class="vs-note bad"><i data-icon="alert"></i><span id="vs-bad"></span></p>
+      </div>
+      <div class="vs-panel">
+        <h3>FireCal</h3>
+        <div class="stripes" id="stripes-harm"></div>
+        <p class="vs-note good"><i data-icon="shield"></i><span>One scale across both sensors.</span></p>
+      </div>
+    </div>
+  </div>
   <span class="pg">2 / 7</span>
 </section>
 
 <section class="slide">
-  <p class="kicker">Our fix</p>
-  <h2>FireCal puts 25 years on one scale.</h2>
+  <p class="kicker">The fix</p>
+  <h2>FireCal puts both sensors on one scale.</h2>
   <div class="steps3">
-    <div><b>1</b>Every satellite on the same 1 km grid</div>
-    <div><b>2</b>Learn MODIS → VIIRS from the years both flew</div>
-    <div><b>3</b>Rebuild 2001–2011, with a likely range</div>
+    <div><b>1</b>Every NASA FIRMS detection on one 1 km grid</div>
+    <div><b>2</b>A model learns MODIS to VIIRS from 2012–2026</div>
+    <div><b>3</b>2000–2011 rebuilt, with a likely range</div>
   </div>
   <div class="story-chart" id="story-harm"></div>
   <span class="pg">3 / 7</span>
 </section>
 
 <section class="slide">
-  <p class="kicker">Proof</p>
-  <h2>Tested on years it had never seen.</h2>
-  <p class="lead">Each year since 2012 was hidden, then rebuilt from MODIS alone and checked against what VIIRS actually saw.</p>
-  <div class="trust" id="trust" style="flex:1;min-height:0"></div>
+  <p class="kicker">Accuracy</p>
+  <h2>Tested on 15 years it had not seen.</h2>
+  <p class="lead">Each year from 2012 to 2026 was hidden, rebuilt from MODIS alone, then compared with what VIIRS recorded.</p>
+  <div class="proofgrid" id="proofgrid" style="flex:1;min-height:0;margin:10px 0 26px"></div>
   <span class="pg">4 / 7</span>
 </section>
 
-<section class="slide" style="background:#f6f7f9">
+<section class="slide">
   <p class="kicker">The tool</p>
-  <h2>One screen: what's burning, is it unusual, what's next.</h2>
+  <h2>One screen: current fires, normal or not, what's next.</h2>
   <div class="cols" style="grid-template-columns:2.2fr 1fr;align-items:start;margin-top:4px;gap:32px">
-    <img src="tool.jpg" alt="FireCal: map of this week's fires beside the answer panel" style="width:100%;aspect-ratio:1280/700;object-fit:cover;object-position:bottom;border-radius:12px;border:1px solid var(--line);box-shadow:0 12px 40px rgba(20,24,29,.16)" />
+    <img src="tool.jpg" alt="FireCal: map of this week's fires beside the answer panel" style="width:100%;aspect-ratio:1280/700;object-fit:cover;object-position:top;border-radius:12px;border:1px solid var(--line)" />
     <ul class="pts">
-      <li><b>This week's fires</b> on the map, with where the wind carries their smoke</li>
-      <li><b>Unusual areas</b> flagged against the same weeks in every earlier year</li>
-      <li><b>A plain verdict</b> for any searched or clicked area: this month vs the 25-year median</li>
+      <li><b>Current fires</b>: every detection from the last 7 days</li>
+      <li><b>Normal or not</b>: this month against the 25-year median, for any searched or clicked area</li>
+      <li><b>Unusual areas</b> marked on the map</li>
+      <li><b>25-year replay</b>, month by month</li>
       <li><b>Wind, humidity</b> and a 5-day fire-spread outlook</li>
-      <li><b>Downloads</b>: the original NASA detections and the calendar, for any dates</li>
+      <li><b>Downloads</b>: NASA detections and the calendar, any dates</li>
     </ul>
   </div>
   <span class="pg">5 / 7</span>
 </section>
 
 <section class="slide">
-  <p class="kicker">Every place has its own fire calendar</p>
+  <p class="kicker">The burning calendar</p>
   <h2 id="h-places">Every place gets its own fire calendar.</h2>
   <div class="cols c2" style="align-items:start">
     <div class="place"><h3 id="name-a"></h3><div class="mini-clock" id="clock-a"></div><p id="ins-a"></p></div>
@@ -125,22 +136,23 @@
   <span class="pg">6 / 7</span>
 </section>
 
-<section class="slide dark">
+<section class="slide" style="background:radial-gradient(900px 520px at 100% 0%, rgba(232,111,36,.22), transparent 60%), var(--bg)">
   <p class="kicker">Impact</p>
-  <h2 style="color:#fff">One honest fire record, from MODIS to VIIRS and beyond.</h2>
+  <h2>Who needs a consistent fire record.</h2>
   <div class="cols c3 three" style="margin-top:20px">
-    <div><h3>Who it helps</h3><ul><li>Early-warning and emergency analysts watching an area</li><li>Land managers planning prescribed burns</li><li>Scientists studying 25-year trends</li></ul></div>
-    <div><h3>Why now</h3><p>MODIS is near the end of its life, and Suomi NPP VIIRS stopped on 2 November 2026. Without harmonization the fire record keeps splitting.</p></div>
-    <div><h3>What's next</h3><ul><li>Any region in the world: the method only needs FIRMS</li><li>Hourly refresh of new detections</li><li>Cloud-aware coverage from daily fire masks</li><li>Alerts when an area turns unusual</li></ul></div>
+    <div><h3>Users</h3><ul><li>Emergency management: tell a normal burn week from a bad one</li><li>Forestry and agriculture: plan and track burn seasons</li><li>Utilities, insurers, air-quality agencies: 25 years of comparable history</li></ul></div>
+    <div><h3>Why now</h3><p>MODIS is near the end of its life, and Suomi NPP VIIRS stopped on 2 November 2026. Without a correction, each sensor change breaks the record again.</p></div>
+    <div><h3>Next</h3><ul><li>Any region: the method only needs NASA FIRMS</li><li>Hourly refresh of new detections</li><li>Cloud-aware coverage from daily fire masks</li><li>Alerts when an area turns unusual</li></ul></div>
   </div>
   <p style="margin-top:auto;font-size:22px">Try it: <b>blazepatrol.github.io/firecal</b></p>
-  <p style="color:#9aa3ad;font-size:14px;margin:4px 0 0">Data: NASA FIRMS (MODIS Collection 6.1, VIIRS 375 m Collection 2). Basemap © Esri, © OpenStreetMap contributors.</p>
+  <p style="color:var(--ink-3);font-size:14px;margin:4px 0 0">Data: NASA FIRMS (MODIS Collection 6.1, VIIRS 375 m Collection 2), NASA Black Marble. Basemap © Esri, © OpenStreetMap contributors. Weather: Open-Meteo.</p>
   <span class="pg">7 / 7</span>
 </section>
 
 </div>
 <div class="hidden">
-  <div id="places"></div><div id="legend"></div><div id="answer"></div><ul id="insights"></ul><div id="detail"></div><div id="storychart"></div><div id="storycap"></div><div id="cap-raw"></div>
+  <div id="places"></div><div id="legend"></div><div id="answer"></div><ul id="insights"></ul><div id="detail"></div><div id="clock"></div>
+  <div id="storychart"></div><div id="storycap"></div><div id="story-raw"></div><div id="cap-raw"></div><div id="trust"></div>
   <span id="updated"></span><div id="tech"></div><div id="foot"></div>
 </div>
 <div id="tip" class="tip" hidden></div>
