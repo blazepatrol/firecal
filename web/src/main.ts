@@ -25,7 +25,7 @@ const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct
 const MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 // round axis ticks (step 1, 2, 2.5 or 5 × a power of ten) from 0 up to at least max
 const ticks = (max: number) => { const p = 10 ** Math.floor(Math.log10(max / 5)), step = [1, 2, 2.5, 5, 10].find((m) => m * p >= max / 5)! * p; return Array.from({ length: Math.ceil(max / step) + 1 }, (_, i) => i * step); };
-const fmt = (v: number) => (v >= 1000 ? Math.round(v).toLocaleString() : v >= 100 ? v.toFixed(0) : v >= 1 ? v.toFixed(1) : v.toFixed(2));
+const fmt = (v: number) => (v >= 1000 ? Math.round(v).toLocaleString() : v >= 10 ? v.toFixed(0) : v >= 1 ? v.toFixed(1) : v.toFixed(2));
 const mname = (m: string) => `${MON[+m.slice(5) - 1]} ${m.slice(0, 4)}`;
 const dname = (d: string) => `${+d.slice(8)} ${MON[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
 const UNIT = "km²-days of detected fire";
@@ -338,7 +338,7 @@ function drawTrust() {
 }
 
 // ---------------- map / explore ----------------
-const map = DECK ? null : L.map("map", { preferCanvas: true, zoomSnap: 0.25 });
+const map = DECK ? null : L.map("map", { preferCanvas: true, zoomSnap: 0.25, scrollWheelZoom: false }); // wheel zoom would trap page scrolling
 const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_";
 const [W, S, E, N] = meta.region.bbox as number[];
 const hotLayer = L.layerGroup();
@@ -453,6 +453,7 @@ function drawStatic() {
   <p><b>Testing.</b> Leave-one-year-out over the overlap years, against raw MODIS and a single ratio. The monthly error measure was fixed before results; whichever method wins is used before 2012.</p>
   <p><b>Limits.</b> Clouds and smoke hide fires from every sensor. Pre-2012 estimates assume the 2012–2026 MODIS–VIIRS relationship held earlier. The newest months use near-real-time data that NASA later reprocesses.</p>`;
   $("foot").innerHTML = `<b>FireCal</b> · Team BlazePatrol · NASA Space Apps Challenge 2026, <i>Harmonization of MODIS and VIIRS Hot Spots</i><br/>
+  <a href="deck.html" style="color:inherit">7-slide summary</a> (<a href="FireCal-deck.pdf" style="color:inherit">PDF</a>) · <a href="https://github.com/blazepatrol/firecal" style="color:inherit">Source code</a>, Apache-2.0<br/>
   Data: NASA Fire Information for Resource Management System (FIRMS), part of NASA LANCE and ESDIS. Basemap © Esri, © OpenStreetMap contributors. Place names © OpenStreetMap (Nominatim).`;
 }
 
@@ -480,6 +481,9 @@ function render() {
   txt("placename", placeName);
   txt("placesub", placeSub);
   drawPlaces(); drawAnswer(); drawCalendar(); drawInsights(); drawStory(); drawHotspots();
+  const lf = rows[lastFull()], ev = document.getElementById("exverdict"); // verdict beside the map (not in the deck)
+  if (ev) { const c = lf.value === null ? null : classify(lf.value, lf.median, lf.month); ev.innerHTML = c ? `${mname(lf.month)}: <b style="color:${c.tone}">${c.mult} · ${c.word}</b> &nbsp;<a href="#">Full answer ↑</a>` : ""; }
+  $("detail").innerHTML = detailHtml(lf) + `<div class="note" style="margin-top:6px">Hover any month for its details.</div>`;
 }
 drawStatic();
 drawTrust();
