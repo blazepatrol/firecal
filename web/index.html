@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FireCal · Know when fire stops being normal</title>
+  <title>FireCal · Is fire activity in your area normal?</title>
   <meta name="description" content="FireCal compares fire activity in any area with 25 years of NASA satellite records and tells you if it is unusual." />
+  <meta name="si-disclosure" content="Code, charts, icons and logo were generated with SI tools, directed, reviewed and tested by the team. Fire data and the night image are NASA's." />
   <meta name="theme-color" content="#090d14" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,7 +13,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23090d14'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='5.5' transform='rotate(-28 16 16)' fill='none' stroke='%23f0efec' stroke-width='1.6'/%3E%3Cpath d='M16 6c.7 3.7 5.2 5.7 5.2 11a5.2 5.2 0 0 1-10.4 0c0-2.3 1-4.2 2.2-5.4.1 1.9.9 3 1.9 3.3-.4-3.2-.3-6.3 1.1-8.900z' fill='%23ffb454'/%3E%3C/svg%3E" />
 </head>
 <body>
-  <header class="hero" id="top">
+  <header class="hero dark" id="top">
     <img class="hero-bg" src="night.jpg" alt="" />
     <canvas id="sky" aria-hidden="true"></canvas>
     <div class="hero-shade"></div>
@@ -20,17 +21,16 @@
       <nav class="nav">
         <a class="brand" href="#top"><span class="logo" data-logo></span><b>FIRECAL</b></a>
         <div class="navlinks">
-          <a href="#app">Tool</a><a href="#calendar">Calendar</a><a href="#proof">Accuracy</a><a href="#uses">Uses</a>
-          <a class="pill" href="#app" data-go>Check an area</a>
+          <a href="#app">Tool</a><a href="#calendar">Calendar</a><a href="#proof">Accuracy</a><a href="#uses">Use cases</a>
         </div>
       </nav>
-      <h1>Know when fire stops being normal.</h1>
+      <h1>Is fire activity in your area normal?</h1>
       <div class="hero-foot">
         <div>
-          <p class="lede">FireCal compares fire activity in any area with 25 years of NASA satellite records and tells you if it is unusual.</p>
+          <p class="lede">FireCal compares it with 25 years of NASA satellite records.</p>
           <div class="hero-cta">
-            <a class="pill big" href="#app" data-go>Check an area</a>
-            <a class="textlink" href="#app" data-replay><i data-icon="play"></i>Replay 25 years</a>
+            <button type="button" class="pill big accent" data-locate><i data-icon="locate"></i>Use my location</button>
+            <a class="pill big" href="#app" data-go><i data-icon="search"></i>Search an area</a>
           </div>
         </div>
         <a class="livecard" id="livecard" href="#app" aria-live="off"></a>
@@ -41,10 +41,10 @@
   <main>
     <section class="features">
       <div class="wrap featgrid">
-        <div><i data-icon="flame"></i><b>Current fires</b><p>Every fire NASA satellites detected in the last 7 days.</p></div>
-        <div><i data-icon="gauge"></i><b>Normal or not</b><p>This month against the same month in every year since 2001.</p></div>
-        <div><i data-icon="calendar"></i><b>25-year calendar</b><p>Burning month by month, for any area.</p></div>
-        <div><i data-icon="wind"></i><b>What happens next</b><p>Wind, humidity and a 5-day fire-spread outlook.</p></div>
+        <div><i data-icon="flame"></i><b>Current fires</b><p>Detections from the last 7 days.</p></div>
+        <div><i data-icon="gauge"></i><b>Normal or not</b><p>This month against every year since 2001.</p></div>
+        <div><i data-icon="calendar"></i><b>25-year calendar</b><p>Burning by month, for any area.</p></div>
+        <div><i data-icon="wind"></i><b>Smoke and weather</b><p>3-hour smoke drift, 5-day outlook.</p></div>
       </div>
     </section>
 
@@ -52,25 +52,29 @@
       <div class="wrap">
         <div class="sechead row">
           <div>
-            <p class="kicker"><i data-icon="target"></i>The tool</p>
-            <h2>Check any area.</h2>
+            <p class="kicker"><i data-icon="target"></i>Tool</p>
+            <h2>Check an area</h2>
           </div>
           <form class="search" id="search" role="search">
             <label class="field"><i data-icon="search"></i><input id="q" type="search" placeholder="Town, address or lat, lon" aria-label="Search a place in Greater Houston" autocomplete="off" /></label>
             <button type="submit" class="pill">Search</button>
-            <button type="button" id="locate" class="ghost"><i data-icon="locate"></i>Use my location</button>
+            <button type="button" class="pill accent" data-locate><i data-icon="locate"></i>Use my location</button>
           </form>
         </div>
         <div class="toolbar">
           <div class="places" id="places" role="group" aria-label="Pick a place"></div>
           <label class="radius"><span>Radius</span><input type="range" id="radius" min="5" max="60" step="5" value="25" /><output id="radiusout">25 km</output></label>
         </div>
-        <p class="hint" id="searchmsg">Search, pick a place or click the map.</p>
+        <p class="hint" id="searchmsg">Search, pick a place or click the map. Click a fire for details.</p>
 
         <div class="app">
           <div class="mapside">
             <div class="mapbox">
               <div id="map" role="application" aria-label="Map: click to choose the centre of your area"></div>
+              <div class="basemaps" id="basemaps" role="group" aria-label="Map style">
+                <button type="button" data-b="map" aria-pressed="true">Map</button><button type="button" data-b="sat" aria-pressed="false">Satellite</button><button type="button" data-b="night" aria-pressed="false">Night</button>
+              </div>
+              <button type="button" class="maplocate" data-locate title="Use my location" aria-label="Use my location"><i data-icon="locate"></i></button>
               <div class="maplabel" id="maplabel" hidden></div>
             </div>
             <div class="timeline">
@@ -89,13 +93,13 @@
       </div>
     </section>
 
-    <section class="band" id="calendar">
+    <section class="band alt" id="calendar">
       <div class="wrap">
         <div class="sechead row">
           <div>
             <p class="kicker"><i data-icon="calendar"></i>Burning calendar</p>
-            <h2 id="calhead">2000 to 2026.</h2>
-            <p class="sub">One square per month. Brighter means more burning.</p>
+            <h2 id="calhead">2000 to 2026</h2>
+            <p class="sub">One square per month. Darker means more burning.</p>
           </div>
           <div class="viewtoggle" role="tablist">
             <button role="tab" data-v="grid" aria-selected="true">Calendar</button>
@@ -129,19 +133,19 @@
       </div>
     </section>
 
-    <section class="band alt problem" id="problem">
+    <section class="band problem" id="problem">
       <div class="wrap twocol">
         <div>
-          <p class="kicker"><i data-icon="alert"></i>The problem</p>
-          <h2>Old and new satellite records don't match.</h2>
-          <p class="sub">NASA has tracked fires with the MODIS sensor since 2000 and with VIIRS since 2012. VIIRS detects smaller fires, so it reports far more burning for the same area. MODIS is retiring. Without a correction, records before 2012 cannot be compared with today.</p>
+          <p class="kicker"><i data-icon="alert"></i>Problem</p>
+          <h2>MODIS and VIIRS records don't match</h2>
+          <p class="sub">VIIRS (since 2012) detects smaller fires than MODIS (since 2000), so it reports more burning for the same area. MODIS is retiring. Without a correction, records before 2012 can't be compared with today.</p>
           <div class="stats" id="stats">
-            <div class="stat"><b data-count="hot"></b><p>fire detections in Greater Houston since November 2000.</p></div>
-            <div class="stat"><b data-count="jump"></b><p>more burning reported by VIIRS than by MODIS, in the same area and the same years.</p></div>
-            <div class="stat"><b data-count="lost"></b><p>of records, 2000 to 2011, exist only in MODIS.</p></div>
+            <div class="stat"><b data-count="jump"></b><p>more burning in VIIRS than in MODIS, same area, same years.</p></div>
+            <div class="stat"><b data-count="lost"></b><p>of records exist only in MODIS.</p></div>
+            <div class="stat"><b data-count="hot"></b><p>detections in Greater Houston since 2000.</p></div>
           </div>
         </div>
-        <div class="versus" id="versus">
+        <div class="versus card" id="versus">
           <div class="vs-head"><span>Burning per year</span><b id="vsyear"></b><button type="button" id="vsreplay" class="ghost"><i data-icon="rewind"></i>Replay</button></div>
           <div class="vs-panel">
             <h3>Raw records</h3>
@@ -153,20 +157,22 @@
             <div class="stripes" id="stripes-harm"></div>
             <p class="vs-note good"><i data-icon="shield"></i><span>One scale across both sensors.</span></p>
           </div>
-          <p class="fine">One bar per year. Before 2012, FireCal shows what VIIRS would have recorded, rebuilt from MODIS.</p>
         </div>
       </div>
     </section>
 
-    <section class="band" id="proof">
+    <section class="band alt" id="proof">
       <div class="wrap">
         <div class="sechead">
           <p class="kicker"><i data-icon="shield"></i>Accuracy</p>
-          <h2>Tested on 15 years it had not seen.</h2>
-          <p class="sub">Each year from 2012 to 2026 was hidden, rebuilt from MODIS alone, then compared with what VIIRS recorded.</p>
+          <h2>Tested on 15 hidden years</h2>
+          <p class="sub">Each year from 2012 to 2026 was hidden, rebuilt from MODIS, and compared with VIIRS.</p>
         </div>
         <div class="proofgrid" id="proofgrid"></div>
-        <div class="trust" id="trust"></div>
+        <details class="more card">
+          <summary>Year-by-year results</summary>
+          <div class="trust" id="trust"></div>
+        </details>
         <details class="more card">
           <summary>25-year record as a chart</summary>
           <div class="seg" role="radiogroup" aria-label="Compare" id="storytoggle">
@@ -179,39 +185,40 @@
       </div>
     </section>
 
-    <section class="band light" id="uses">
+    <section class="band" id="uses">
       <div class="wrap">
         <div class="sechead">
-          <p class="kicker"><i data-icon="globe"></i>Uses</p>
-          <h2>Who needs a consistent fire record.</h2>
-          <p class="sub">The prototype covers Greater Houston. The method works anywhere NASA FIRMS has data.</p>
+          <p class="kicker"><i data-icon="globe"></i>Use cases</p>
+          <h2>Who it is for</h2>
+          <p class="sub">Each example shows FireCal's current result for a real area.</p>
         </div>
-        <div class="uses">
-          <div><i data-icon="beacon"></i><b>Emergency management</b><p>Tell a normal burn week from the start of a bad one before committing crews.</p></div>
-          <div><i data-icon="tree"></i><b>Forestry and land management</b><p>Plan prescribed burns around the area's real fire season and keep a burn history.</p></div>
-          <div><i data-icon="sprout"></i><b>Agriculture</b><p>Track crop-residue burning seasons and how they change from year to year.</p></div>
-          <div><i data-icon="bolt"></i><b>Electric utilities</b><p>Find service areas where fire activity near power lines is above its usual level.</p></div>
-          <div><i data-icon="umbrella"></i><b>Insurance and risk</b><p>Assess wildfire exposure on 25 years of comparable history instead of 15.</p></div>
-          <div><i data-icon="cloud"></i><b>Air quality and public health</b><p>Anticipate smoke seasons and relate burning to air-quality alerts.</p></div>
+        <div class="usebox">
+          <div class="usetabs" id="usetabs" role="tablist" aria-label="Use cases"></div>
+          <div class="usepanel card" id="usepanel" role="tabpanel" aria-live="polite"></div>
         </div>
+        <p class="fine" style="margin-top:14px">The prototype covers Greater Houston. The method works anywhere NASA FIRMS has data.</p>
       </div>
     </section>
 
     <section class="band alt" id="how">
       <div class="wrap">
-        <div class="sechead"><p class="kicker"><i data-icon="swap"></i>Method</p><h2>How it works.</h2></div>
+        <div class="sechead"><p class="kicker"><i data-icon="swap"></i>Method</p><h2>How it works</h2></div>
         <ol class="steps">
-          <li><i data-icon="grid"></i><b>One grid</b>Every detection is placed on a 1 km grid. A square counts once per satellite per day.</li>
-          <li><i data-icon="gap"></i><b>Gaps stay gaps</b>A month counts only if the satellite was operating and every day was retrieved.</li>
-          <li><i data-icon="swap"></i><b>Learn the conversion</b>A model learns MODIS to VIIRS from 2012 to 2026, when both sensors flew.</li>
-          <li><i data-icon="rewind"></i><b>Rebuild 2000 to 2011</b>Earlier months show the VIIRS-equivalent estimate with a likely range.</li>
+          <li><i data-icon="grid"></i><b>One grid</b>Every detection goes on a 1 km grid. A square counts once per satellite per day.</li>
+          <li><i data-icon="gap"></i><b>Gaps stay gaps</b>A month counts only if every day was retrieved.</li>
+          <li><i data-icon="swap"></i><b>Learn the conversion</b>A model learns MODIS to VIIRS from 2012–2026, when both flew.</li>
+          <li><i data-icon="rewind"></i><b>Rebuild 2000–2011</b>Earlier months show the VIIRS-equivalent estimate with a likely range.</li>
         </ol>
         <details class="tech"><summary>Technical details</summary><div id="tech"></div></details>
       </div>
     </section>
   </main>
 
-  <footer class="foot"><div class="wrap" id="foot"></div></footer>
+  <footer class="foot dark">
+    <img class="hero-bg" src="night.jpg" alt="" loading="lazy" />
+    <div class="hero-shade"></div>
+    <div class="wrap" id="foot"></div>
+  </footer>
   <div id="tip" class="tip" role="tooltip" hidden></div>
   <span id="updated" hidden></span>
   <script type="module" src="/src/main.ts"></script>
