@@ -92,6 +92,7 @@ const DECK = "deck" in document.body.dataset; // deck.html reuses these renderer
 let calView: "clock" | "grid" = "grid";
 let storyMode: "raw" | "harm" = "raw";
 const txt = (id: string, v: string) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+const escapeHtml = (v: string) => v.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 const STILL = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // ---------------- data ----------------
@@ -187,7 +188,7 @@ function scaleBar(r: number | null, mult: string) {
     <div class="ticks"><span>Well below</span><span>Below</span><span>Normal</span><span>Above</span><span>Well above</span></div></div>`;
 }
 function drawAnswer() {
-  const tf = lastFull(), r = rows[tf], mon = MONTH[+r.month.slice(5) - 1], where = `<div class="where">${icon("target", 16)}${placeName}</div>`;
+  const tf = lastFull(), r = rows[tf], mon = MONTH[+r.month.slice(5) - 1], where = `<div class="where">${icon("target", 16)}${escapeHtml(placeName)}</div>`;
   if (r.value === null) { $("answer").innerHTML = where + `<p class="exp">No observation for ${mon}.</p>`; return; }
   const c = classify(r.value, r.median, r.month);
   const same = rows.filter((x) => x.month.slice(5) === r.month.slice(5) && x.month >= "2001");
@@ -299,7 +300,7 @@ function drawClock() {
   }
   MON.forEach((m, i) => { const [x, y] = pt(r1 + 18, gapDeg / 2 + (i + 0.5) * mdeg); s += `<text class="mo" x="${x}" y="${y + 4}" text-anchor="middle">${m}</text>`; });
   const nm = placeName.length > 20 ? placeName.slice(0, 19) + "…" : placeName;
-  s += `<text class="mo" x="${cx}" y="${cy - 4}" text-anchor="middle" style="font-size:14px">${nm}</text><text x="${cx}" y="${cy + 15}" text-anchor="middle">2001 → ${years.at(-1)}</text></svg>`;
+  s += `<text class="mo" x="${cx}" y="${cy - 4}" text-anchor="middle" style="font-size:14px">${escapeHtml(nm)}</text><text x="${cx}" y="${cy + 15}" text-anchor="middle">2001 → ${years.at(-1)}</text></svg>`;
   $("clock").innerHTML = s;
   bindCells($("clock"));
 }
@@ -705,7 +706,7 @@ function setHist(t: number | null) {
   const r = rows[t], c = r.value !== null && r.median !== null ? classify(r.value, r.median, r.month) : null;
   lab.hidden = false;
   lab.innerHTML = `<div class="d">${MONTH[+r.month.slice(5) - 1]} <b>${r.month.slice(0, 4)}</b></div>
-    <div class="s">${r.value === null ? "No satellite record" : `${fmt(r.value)} km²-days in ${placeName}`}${c && c.r !== null ? ` · <b style="color:${c.tone}">${c.word}</b>` : ""}${r.type === "estimated" ? " · rebuilt from the older satellite" : ""}</div>
+    <div class="s">${r.value === null ? "No satellite record" : `${fmt(r.value)} km²-days in ${escapeHtml(placeName)}`}${c && c.r !== null ? ` · <b style="color:${c.tone}">${c.word}</b>` : ""}${r.type === "estimated" ? " · rebuilt from the older satellite" : ""}</div>
     <button type="button" id="histexit" class="ghost">${icon("close", 16)}Back to ${LIVE ? "now" : "the latest week"}</button>`;
   $("histexit").onclick = () => setHist(null);
   if (ph) { ph.hidden = false; ph.style.left = `${((t + 0.5) / T) * 100}%`; }
@@ -935,7 +936,7 @@ function consoleBar() {
   const el = document.getElementById("consolebar");
   if (!el) return;
   const mine = recent.filter((f) => selected.has(f.block)).length;
-  el.innerHTML = `<span><i class="led live"></i><b>${LIVE ? "Live" : "Latest"}</b></span><span>NASA FIRMS · MODIS · VIIRS</span><span>Passes to <b>${dname(meta.observations_through)}</b></span><span><b>${mine}</b> detections · ${RECENT_DAYS} days</span><span>Area <b>${placeName}</b></span>`;
+  el.innerHTML = `<span><i class="led live"></i><b>${LIVE ? "Live" : "Latest"}</b></span><span>NASA FIRMS · MODIS · VIIRS</span><span>Passes to <b>${dname(meta.observations_through)}</b></span><span><b>${mine}</b> detections · ${RECENT_DAYS} days</span><span>Area <b>${escapeHtml(placeName)}</b></span>`;
 }
 
 // ---------------- downloads ----------------
@@ -984,8 +985,7 @@ function drawStatic() {
   <p>Team BlazePatrol · NASA Space Apps Challenge 2026, <i>Harmonization of MODIS and VIIRS Hot Spots</i><br/>
   <a href="FireCal-deck.pdf">7-slide summary (PDF)</a> · <a href="deck.html">web version</a> · <a href="https://github.com/blazepatrol/firecal">Source code</a>, Apache-2.0</p>
   <p class="fine">Fire data: NASA FIRMS (LANCE, ESDIS), through ${dname(meta.observations_through)}. Night image and night map layer: NASA Black Marble, via NASA GIBS. Basemaps © Esri, Maxar, Earthstar Geographics, © OpenStreetMap contributors. Place search © OpenStreetMap (Nominatim). Weather: Open-Meteo.</p>
-  <p class="glowcap">Background: all ${Number(meta.n_qualifying).toLocaleString()} counted NASA FIRMS detections since Nov 2000, on NASA Black Marble night lights</p>
-  <p class="fine">SI disclosure: the code, charts, icons and logo were generated with SI tools, directed, reviewed and tested by the team. Fire data and the night image are NASA's.</p>`;
+  <p class="glowcap">Background: all ${Number(meta.n_qualifying).toLocaleString()} counted NASA FIRMS detections since Nov 2000, on NASA Black Marble night lights</p>`;
 }
 
 // ---------------- controls ----------------
