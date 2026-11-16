@@ -20,7 +20,7 @@ const DATA = `${import.meta.env.BASE_URL}data/`;
 const getJSON = (f: string) => fetch(DATA + f).then((r) => { if (!r.ok) throw new Error(f); return r.json(); });
 const METHOD: Record<string, string> = { unadjusted: "Raw MODIS (no adjustment)", ratio: "Single overlap ratio", seasonal: "Seasonal regression", gbm: "FireCal model (boosted)" };
 // Light theme. Series colours and the ember ramp were checked with the dataviz palette validator against a white surface.
-const TH = { ink: "#14161a", ink2: "#454a52", mute: "#7b8088", grid: "#e7e1d6", surface: "#ffffff", zero: "#f1ede4", est: "#d8d2c6", obs: "#b5aea1" };
+const TH = { ink: "#1a1310", ink2: "#5b5148", mute: "#85796d", grid: "#e2dace", surface: "#fbf8f3", zero: "#f1ece3", est: "#d8d0c3", obs: "#b5aa9b" };
 const C = { modis: "#2a78d6", npp: "#eb6834", n20: "#1baf7a", ink: TH.ink };
 const RAMP = ["#eda465", "#e38b43", "#d5732a", "#bd5d1e", "#9f4a17", "#7c3811", "#55250a"];
 const TONE = { cool: "#1c5cab", good: "#0a7d0a", warn: "#c2541f", hot: "#d03b3b" };
@@ -33,7 +33,7 @@ const mname = (m: string) => `${MON[+m.slice(5) - 1]} ${m.slice(0, 4)}`;
 const dname = (d: string) => `${+d.slice(8)} ${MON[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
 const UNIT = "km²-days of detected fire";
 const UNIT_S = `<abbr title="One km²-day is one square kilometre with fire detected on one day">km²-days</abbr>`;
-const SVG_TEXT = `<style>text{font:12px Inter,system-ui,sans-serif;fill:${TH.ink2}}.mo{font-weight:600;fill:${TH.ink}}</style>`;
+const SVG_TEXT = `<style>text{font:12px Archivo,system-ui,sans-serif;fill:${TH.ink2}}.mo{font-weight:600;fill:${TH.ink}}</style>`;
 
 // ---------------- icons: drawn for FireCal on a 24 px grid ----------------
 const FLAME = "M12 2.5c.6 3.4 5.5 5.6 5.5 11a5.5 5.5 0 0 1-11 0c0-2.3 1-4.2 2.3-5.500.1 1.9.9 3 2 3.300-.4-3.200-.3-6.300 1.200-8.800z";
@@ -72,7 +72,7 @@ const ICON: Record<string, string> = {
   beacon: `<path d="M7 19v-6a5 5 0 0 1 10 0v6M5 19h14M12 3v2M4.500 6 6 7.500M19.500 6 18 7.500"/>`,
 };
 const icon = (n: string, size = 20) => `<svg class="ic" viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
-const LOGO = `<svg viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="16" cy="16" rx="14" ry="5.600" transform="rotate(-28 16 16)" fill="none" stroke="currentColor" stroke-width="1.5"/><g transform="translate(2.200 3.400) scale(1.150)"><path d="${FLAME}" fill="#ffb454" stroke="#090d14" stroke-width="1"/></g><circle cx="26.700" cy="8" r="1.900" fill="currentColor"/></svg>`;
+const LOGO = `<svg viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="16" cy="16" rx="14" ry="5.600" transform="rotate(-28 16 16)" fill="none" stroke="currentColor" stroke-width="1.5"/><g transform="translate(2.200 3.400) scale(1.150)"><path d="${FLAME}" fill="#ff6a2b" stroke="#140e0c" stroke-width="1"/></g><circle cx="26.700" cy="8" r="1.900" fill="currentColor"/></svg>`;
 document.querySelectorAll<HTMLElement>("[data-icon]").forEach((e) => (e.innerHTML = icon(e.dataset.icon!)));
 document.querySelectorAll<HTMLElement>("[data-logo]").forEach((e) => (e.innerHTML = LOGO));
 
@@ -405,7 +405,7 @@ function countUp() {
   const est = rows.filter((r) => r.type === "estimated").length / 12;
   const spec: Record<string, [number, (v: number) => string]> = {
     hot: [Number(meta.n_hotspots), (v) => Math.round(v).toLocaleString()],
-    jump: [REG.jump ?? 0, (v) => `${v.toFixed(1)}x`], // Anton has no multiplication sign
+    jump: [REG.jump ?? 0, (v) => `${v.toFixed(1)}×`],
     lost: [Math.round(est), (v) => `${Math.round(v)} years`],
   };
   document.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
@@ -487,11 +487,11 @@ const tileLayer = L.layerGroup(), windLayer = L.layerGroup(), recentLayer = L.la
 const esri = (path: string, o: L.TileLayerOptions = {}) => L.tileLayer(`${ESRI}${path}/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 16, ...o });
 // Three basemaps: a plain map, satellite imagery, and NASA's night lights (the hero image, as a map layer).
 const BASE: Record<string, L.LayerGroup> = {
-  map: L.layerGroup([esri("Canvas/World_Light_Gray_Base", { attribution: "Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors" }), esri("Canvas/World_Light_Gray_Reference", { pane: "shadowPane" })]),
+  map: L.layerGroup([esri("Canvas/World_Dark_Gray_Base", { attribution: "Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors" }), esri("Canvas/World_Dark_Gray_Reference", { pane: "shadowPane" })]),
   sat: L.layerGroup([esri("World_Imagery", { attribution: "Imagery &copy; Esri, Maxar, Earthstar Geographics" }), esri("Canvas/World_Dark_Gray_Reference", { pane: "shadowPane" })]),
   night: L.layerGroup([L.tileLayer("https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_Black_Marble/default/2016-01-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png", { maxNativeZoom: 8, maxZoom: 16, attribution: "Night lights: NASA Black Marble, NASA GIBS" }), esri("Canvas/World_Dark_Gray_Reference", { pane: "shadowPane" })]),
 };
-const outline = L.rectangle([[S, W], [N, E]], { color: TH.ink, weight: 1.2, opacity: 0.6, fill: false, dashArray: "4 5", interactive: false });
+const outline = L.rectangle([[S, W], [N, E]], { color: "#f6f0e8", weight: 1.2, opacity: 0.6, fill: false, dashArray: "4 5", interactive: false });
 if (map) {
   BASE.map.addTo(map);
   map.fitBounds([[S, W], [N, E]], { padding: [6, 6] });
@@ -500,14 +500,13 @@ if (map) {
   document.querySelectorAll<HTMLButtonElement>("#basemaps button").forEach((btn) => (btn.onclick = () => {
     for (const k in BASE) map.removeLayer(BASE[k]);
     BASE[btn.dataset.b!].addTo(map);
-    outline.setStyle({ color: btn.dataset.b === "map" ? TH.ink : "#ffffff" });
     document.querySelectorAll("#basemaps button").forEach((x) => x.setAttribute("aria-pressed", String(x === btn)));
   }));
 }
 let shape: L.Layer | null = null;
 const KX = 111.32 * Math.cos((((S + N) / 2) * Math.PI) / 180), KY = 110.95;
 const centre = (b: Block) => [(b.bounds[0] + b.bounds[2]) / 2, (b.bounds[1] + b.bounds[3]) / 2];
-const SEL = { color: TH.ink, weight: 2, fillColor: TH.ink, fillOpacity: 0.04, dashArray: "6 5", interactive: false };
+const SEL = { color: "#f6f0e8", weight: 2, fillColor: "#f6f0e8", fillOpacity: 0.05, dashArray: "6 5", interactive: false };
 function setShape(l: L.Layer | null) { if (!map) return; if (shape) map.removeLayer(shape); shape = l; if (l) l.addTo(map); }
 function areaIds(k: string) {
   if (k === "all") return allIds();
@@ -562,7 +561,7 @@ async function selectedHotspots() {
 type Wx = { speed: number[]; dir: number[]; gust: number[]; rh: number[] };
 type Fire = { lat: number; lon: number; date: string; time: string; at: number; frp: number; platform: string; sensor: string; block: number; age: number; day: number; wx?: Wx; drift?: { km: number; to: string } };
 let recent: Fire[] = [], yearFires: Fire[] = [];
-const RECENT_DAYS = 7, NEW_DAYS = 2, DRIFT_H = 3, FRESH = "#d4541c", OLDER = "#c9a58c", SMOKE = "#5f574d";
+const RECENT_DAYS = 7, NEW_DAYS = 2, DRIFT_H = 3, FRESH = "#d4541c", OLDER = "#c9a58c", SMOKE = "#e2d6c8";
 const COMPASS = ["north", "north-east", "east", "south-east", "south", "south-west", "west", "north-west"];
 const compass = (deg: number) => COMPASS[Math.round((((deg % 360) + 360) % 360) / 45) % 8];
 const level = (frp: number) => (frp < 5 ? "low" : frp < 20 ? "moderate" : "high");
@@ -638,7 +637,7 @@ function findUnusual() {
   return `since ${since}`;
 }
 const HOT = ["", "#f2a020", "#d03b3b"];
-const paintNow = () => rects.forEach((r, id) => { const c = unusual.get(id) ?? 0; r.options.interactive = !!c; r.setStyle(c ? { fillColor: HOT[c], fillOpacity: c === 2 ? 0.36 : 0.3 } : { fillOpacity: 0 }); });
+const paintNow = () => rects.forEach((r, id) => { const c = unusual.get(id) ?? 0; r.options.interactive = !!c; r.setStyle(c ? { fillColor: HOT[c], fillOpacity: c === 2 ? 0.55 : 0.42 } : { fillOpacity: 0 }); });
 const selCentre = (): [number, number] => {
   if (placeKey === "custom" && lastClick) return [lastClick.lat, lastClick.lng];
   const cs = blocks.filter((b) => selected.has(b.id)).map(centre);
@@ -818,7 +817,7 @@ function heroScene() {
     ctx.clearRect(0, 0, cw, ch);
     const [x0, y0] = xy(W, N), [x1, y1] = xy(E, S);
     ctx.globalAlpha = 1; ctx.strokeStyle = "rgba(240,239,236,.3)"; ctx.lineWidth = 1; ctx.setLineDash([4, 6]); ctx.strokeRect(x0, y0, x1 - x0, y1 - y0); ctx.setLineDash([]);
-    ctx.font = "600 10px Inter, sans-serif"; ctx.fillStyle = "rgba(240,239,236,.62)"; if (roomy) ctx.fillText("GREATER HOUSTON WATCH AREA", x0, y0 - 8);
+    ctx.font = "600 10px Archivo, sans-serif"; ctx.fillStyle = "rgba(240,239,236,.62)"; if (roomy) ctx.fillText("GREATER HOUSTON WATCH AREA", x0, y0 - 8);
     if (heroBox) { // the area the example card is showing
       const [bx0, by0] = xy(heroBox[0], heroBox[3]), [bx1, by1] = xy(heroBox[2], heroBox[1]);
       ctx.strokeStyle = "rgba(255,180,84,.9)"; ctx.lineWidth = 1.5; ctx.strokeRect(bx0, by0, bx1 - bx0, by1 - by0);
@@ -854,7 +853,7 @@ function heroScene() {
     ctx.globalAlpha = 1;
     if (!roomy) return; // caption under the watch area: what is glowing, and when
     const when = STILL ? `TO ${dname(meta.observations_through).toUpperCase()}` : `${MONTH[new Date(JAN1 + Math.min(d, span - 8) * 864e5).getUTCMonth()].toUpperCase()} ${LAST_YEAR}`;
-    ctx.font = "600 11px Inter, sans-serif"; ctx.fillStyle = "#ffb454"; ctx.beginPath(); ctx.arc(x0 + 4, y1 + 16, 3.5, 0, 6.283); ctx.fill();
+    ctx.font = "600 11px Archivo, sans-serif"; ctx.fillStyle = "#ffb454"; ctx.beginPath(); ctx.arc(x0 + 4, y1 + 16, 3.5, 0, 6.283); ctx.fill();
     ctx.fillStyle = "rgba(240,239,236,.72)"; ctx.fillText("FIRE ACTIVITY SEEN FROM ORBIT", x0 + 14, y1 + 20);
     ctx.fillStyle = "#ffd089"; ctx.fillText(when, x0 + 22 + ctx.measureText("FIRE ACTIVITY SEEN FROM ORBIT").width, y1 + 20);
   };
@@ -864,6 +863,79 @@ function heroScene() {
   new IntersectionObserver((es) => (on = es[0].isIntersecting)).observe(cv);
   const loop = (ms: number) => { if (on && !document.hidden) frame(ms); requestAnimationFrame(loop); };
   requestAnimationFrame(loop);
+}
+
+
+// ---------------- hero: the 25-year burning wall. Raw records jump in 2012; FireCal puts them on one scale. ----------------
+function heroWall() {
+  const el = document.getElementById("wallgrid"), note = document.getElementById("wallnote");
+  if (!el || !note) return;
+  const keep = selected; selected = allIds(); const R = computeRows(); selected = keep;
+  const raw = R.map((r) => (r.month >= "2012-01" ? r.npp ?? r.n20 ?? r.modis : r.modis));
+  const harm = R.map((r) => r.value);
+  const Y0 = +M[0].slice(0, 4), Y1 = +LAST_YEAR, NY = Y1 - Y0 + 1;
+  const yearSum = (v: Num[]) => Array.from({ length: NY }, (_, i) => v.reduce<number>((a, x, t) => a + (+M[t].slice(0, 4) === Y0 + i && x !== null ? x : 0), 0));
+  const rawY = yearSum(raw), harmY = yearSum(harm);
+  const full = (i: number) => i > 0 && i < NY - 1;
+  const ymax = Math.max(...rawY.filter((_, i) => full(i)), ...harmY.filter((_, i) => full(i)));
+  const vmax = Math.log1p(Math.max(...(raw.filter((v) => v !== null) as number[]), ...(harm.filter((v) => v !== null) as number[])));
+  const stops: [number, number[]][] = [[0, [43, 29, 23]], [0.22, [86, 34, 18]], [0.45, [158, 50, 24]], [0.65, [216, 88, 38]], [0.82, [245, 150, 68]], [1, [255, 228, 170]]];
+  const col = (v: Num) => {
+    if (v === null) return "#1a120f";
+    const x = Math.min(1, Math.log1p(v) / vmax); let i = 1; while (i < stops.length - 1 && stops[i][0] < x) i++;
+    const [a, ca] = stops[i - 1], [b, cb] = stops[i], k = (x - a) / (b - a || 1);
+    return `rgb(${ca.map((c, j) => Math.round(c + (cb[j] - c) * k)).join(",")})`;
+  };
+  const W = 640, GX = 26, cw = (W - GX) / NY, ch = 14, BH = 64, TOP = 18, GY = TOP + BH + 8, H = GY + 12 * ch + 22;
+  const xi = (i: number) => GX + i * cw;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly burning in Greater Houston, ${Y0} to ${Y1}">`;
+  harmY.forEach((_, i) => (s += `<rect class="wb" data-i="${i}" x="${(xi(i) + 2).toFixed(1)}" y="${TOP}" width="${(cw - 4).toFixed(1)}" height="${BH}" rx="1.5" fill="${full(i) ? "#e0602a" : "#6b4a3a"}"/>`));
+  R.forEach((r, t) => {
+    const yr = +r.month.slice(0, 4) - Y0, mo = +r.month.slice(5) - 1;
+    s += `<rect class="wc" data-t="${t}" x="${(xi(yr) + 1).toFixed(1)}" y="${(GY + mo * ch + 1).toFixed(1)}" width="${(cw - 2).toFixed(1)}" height="${ch - 2}" rx="1.5"/>`;
+  });
+  "JFMAMJJASOND".split("").forEach((m, i) => (s += `<text x="${GX - 9}" y="${GY + i * ch + ch - 3.5}" text-anchor="end">${m}</text>`));
+  for (let i = 0; i < NY; i++) { const y = Y0 + i; if ((y % 5 === 0 && Y1 - y >= 2) || y === 2012 || y === Y1) s += `<text x="${xi(i) + cw / 2}" y="${H - 6}" text-anchor="middle"${y === 2012 ? ' class="k"' : ""}>${y === 2012 || y === Y1 || y === Y0 ? y : `'${String(y).slice(2)}`}</text>`; }
+  const x12 = xi(2012 - Y0);
+  s += `<line class="mk" x1="${x12}" x2="${x12}" y1="${TOP - 6}" y2="${GY + 12 * ch + 2}"/><text class="k" x="${x12 + 6}" y="${TOP - 4}">VIIRS JOINS</text>`;
+  el.innerHTML = s + "</svg>";
+  const cells = el.querySelectorAll<SVGRectElement>(".wc"), bars = el.querySelectorAll<SVGRectElement>(".wb"), btns = document.querySelectorAll<HTMLButtonElement>("#wallmode button");
+  const jump = REG.jump ? `${REG.jump.toFixed(1)}×` : "several times";
+  const apply = (mode: "raw" | "harm") => {
+    const v = mode === "raw" ? raw : harm, y = mode === "raw" ? rawY : harmY;
+    cells.forEach((c, t) => (c.style.fill = col(v[t])));
+    bars.forEach((b, i) => (b.style.transform = `scaleY(${Math.max(0.02, Math.min(1, y[i] / ymax)).toFixed(3)})`));
+    btns.forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === mode)));
+    note.innerHTML = mode === "raw"
+      ? `${icon("alert", 18)}<span><b>2012 looks like a jump in fire activity.</b> It isn't: VIIRS, flying since 2012, detects smaller fires and reports ${jump} more burning than MODIS.</span>`
+      : `${icon("shield", 18)}<span><b>One scale, ${Y0}–${Y1}.</b> FireCal rebuilds the MODIS years on the VIIRS scale. Tested on 15 years it had not seen.</span>`;
+  };
+  let mode: "raw" | "harm" = "raw", auto = 0;
+  apply(mode);
+  btns.forEach((b) => (b.onclick = () => { clearInterval(auto); auto = -1; mode = b.dataset.v as typeof mode; apply(mode); }));
+  if (STILL) return;
+  const start = () => { if (auto) return; auto = window.setInterval(() => { mode = mode === "raw" ? "harm" : "raw"; apply(mode); }, 4200); };
+  setTimeout(start, 1800);
+}
+function heroTicker() {
+  const el = document.getElementById("ticker");
+  if (!el) return;
+  const items = [
+    `<i>●</i> NASA FIRMS passes to <b>${dname(meta.observations_through)}</b>`,
+    `<b>${Number(meta.n_hotspots).toLocaleString()}</b> detections since Nov 2000`,
+    `<b>4</b> satellites: Terra · Aqua · Suomi NPP · NOAA-20`,
+    `<b>${recent.length}</b> fire detections in the last ${RECENT_DAYS} days`,
+    `Suomi NPP stopped <b>${dname(meta.snpp_end)}</b>: NOAA-20 carries VIIRS`,
+    `Every detection on one <b>1 km</b> grid`,
+    `Missing data stays <b>missing</b>, never zero`,
+  ].map((x) => `<span>${x}</span>`).join("");
+  el.innerHTML = `<div class="tk">${items}${items}</div>`;
+}
+function consoleBar() {
+  const el = document.getElementById("consolebar");
+  if (!el) return;
+  const mine = recent.filter((f) => selected.has(f.block)).length;
+  el.innerHTML = `<span><i class="led live"></i><b>${LIVE ? "Live" : "Latest"}</b></span><span>NASA FIRMS · MODIS · VIIRS</span><span>Passes to <b>${dname(meta.observations_through)}</b></span><span><b>${mine}</b> detections · ${RECENT_DAYS} days</span><span>Area <b>${placeName}</b></span>`;
 }
 
 // ---------------- downloads ----------------
@@ -982,7 +1054,7 @@ function useCases() {
 function render() {
   rows = computeRows();
   txt("calhead", `${placeName}, ${M[0].slice(0, 4)}–${LAST_YEAR}`);
-  drawPlaces(); drawAnswer(); drawCalendar(); drawInsights(); drawStory(); drawNow(); drawStrip();
+  drawPlaces(); drawAnswer(); drawCalendar(); drawInsights(); drawStory(); drawNow(); drawStrip(); consoleBar();
   $("detail").innerHTML = detailHtml(rows[lastFull()]) + `<div class="note" style="margin-top:6px">Hover any month for its details.</div>`;
   if (hist !== null) setHist(hist);
 }
@@ -998,7 +1070,7 @@ else {
     <span><i class="smoke"></i>Smoke drift, next ${DRIFT_H} h</span>
     <span class="brk">Burning ${since}, compared with the same weeks in earlier years:</span><span><i class="tile" style="background:${HOT[1]}"></i>above usual</span><span><i class="tile" style="background:${HOT[2]}"></i>far above usual</span>`;
   render();
-  liveCard(); useCases(); heroScene();
+  liveCard(); useCases(); heroWall(); heroTicker();
   loadDrift(); // plumes appear once the wind forecast arrives
 }
 

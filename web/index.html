@@ -6,49 +6,61 @@
   <title>FireCal · Is fire activity in your area normal?</title>
   <meta name="description" content="FireCal compares fire activity in any area with 25 years of NASA satellite records and tells you if it is unusual." />
   <meta name="si-disclosure" content="Code, charts, icons and logo were generated with SI tools, directed, reviewed and tested by the team. Fire data and the night image are NASA's." />
-  <meta name="theme-color" content="#090d14" />
+  <meta name="theme-color" content="#140e0c" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23090d14'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='5.5' transform='rotate(-28 16 16)' fill='none' stroke='%23f0efec' stroke-width='1.6'/%3E%3Cpath d='M16 6c.7 3.7 5.2 5.7 5.2 11a5.2 5.2 0 0 1-10.4 0c0-2.3 1-4.2 2.2-5.4.1 1.9.9 3 1.9 3.3-.4-3.2-.3-6.3 1.1-8.900z' fill='%23ffb454'/%3E%3C/svg%3E" />
 </head>
 <body>
   <header class="hero dark" id="top">
-    <img class="hero-bg" src="night.jpg" alt="" />
-    <canvas id="sky" aria-hidden="true"></canvas>
-    <div class="hero-shade"></div>
+    <div class="hero-glow" aria-hidden="true"></div>
     <div class="hero-in wrap">
       <nav class="nav">
         <a class="brand" href="#top"><span class="logo" data-logo></span><b>FIRECAL</b></a>
         <div class="navlinks">
           <a href="#app">Tool</a><a href="#calendar">Calendar</a><a href="#proof">Accuracy</a><a href="#uses">Use cases</a>
+          <a class="pill accent navcta" href="#app" data-go>Check an area</a>
         </div>
       </nav>
-      <h1>Is fire activity in your area normal?</h1>
-      <div class="hero-foot">
-        <div>
-          <p class="lede">FireCal compares it with 25 years of NASA satellite records.</p>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><i class="led live"></i>NASA FIRMS &middot; MODIS + VIIRS &middot; Greater Houston</p>
+          <h1>Is fire activity in your area normal?</h1>
+          <p class="lede">FireCal puts 25 years of NASA fire satellites on one scale, then compares this month with every year since 2001.</p>
           <div class="hero-cta">
             <button type="button" class="pill big accent" data-locate><i data-icon="locate"></i>Use my location</button>
             <a class="pill big" href="#app" data-go><i data-icon="search"></i>Search an area</a>
           </div>
+          <a class="livecard" id="livecard" href="#app" aria-live="off"></a>
         </div>
-        <a class="livecard" id="livecard" href="#app" aria-live="off"></a>
+        <figure class="wall" id="wall">
+          <div class="wall-head">
+            <div class="seg dark" id="wallmode" role="radiogroup" aria-label="Records shown">
+              <button type="button" role="radio" data-v="raw" aria-checked="true">Raw satellite records</button>
+              <button type="button" role="radio" data-v="harm" aria-checked="false">FireCal: one scale</button>
+            </div>
+          </div>
+          <div class="wall-grid" id="wallgrid"></div>
+          <p class="wall-note" id="wallnote" aria-live="polite"></p>
+          <figcaption>Each square is one month of satellite-detected burning in Greater Houston. Brighter means more burning. Bars are yearly totals.</figcaption>
+        </figure>
       </div>
     </div>
+    <div class="ticker" id="ticker"></div>
   </header>
 
   <main>
-    <section class="features">
-      <div class="wrap featgrid">
-        <div><i data-icon="flame"></i><b>Current fires</b><p>Detections from the last 7 days.</p></div>
-        <div><i data-icon="gauge"></i><b>Normal or not</b><p>This month against every year since 2001.</p></div>
-        <div><i data-icon="calendar"></i><b>25-year calendar</b><p>Burning by month, for any area.</p></div>
-        <div><i data-icon="wind"></i><b>Smoke and weather</b><p>3-hour smoke drift, 5-day outlook.</p></div>
+    <section class="bigstats" aria-label="What harmonization changes">
+      <div class="wrap">
+        <p class="kicker"><i data-icon="swap"></i>What harmonization changes</p>
+        <div class="bs"><b>3.7&times;</b><p>more burning in VIIRS records than in MODIS records for the same area and years. Joined as they are, 2012 looks like a jump in fire activity.</p></div>
+        <div class="bs"><b>72<small>%</small><s>&rarr;</s>9<small>%</small></b><p>typical yearly error when FireCal rebuilt 15 years it had not seen from MODIS, against raw MODIS. A single correction factor gets 10%.</p></div>
+        <div class="bs"><b>80<small>%</small><s>&rarr;</s>7<small>%</small></b><p>of months since 2012 read &ldquo;well above normal&rdquo; when the raw records are joined. With FireCal, 7% do.</p></div>
       </div>
     </section>
 
-    <section class="band tool" id="app">
+    <section class="band tool console" id="app">
       <div class="wrap">
         <div class="sechead row">
           <div>
@@ -67,6 +79,7 @@
         </div>
         <p class="hint" id="searchmsg">Search, pick a place or click the map. Click a fire for details.</p>
 
+        <div class="consolebar" id="consolebar"></div>
         <div class="app">
           <div class="mapside">
             <div class="mapbox">
