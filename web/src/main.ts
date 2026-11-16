@@ -982,8 +982,9 @@ function drawStatic() {
   <div class="cta"><button type="button" class="pill big accent" data-locate>${icon("locate")}Use my location</button><a class="pill big" href="#app" data-go>${icon("search")}Search an area</a></div>
   <div class="brand"><span class="logo">${LOGO}</span><b>FIRECAL</b></div>
   <p>Team BlazePatrol · NASA Space Apps Challenge 2026, <i>Harmonization of MODIS and VIIRS Hot Spots</i><br/>
-  <a href="deck.html">7-slide summary</a> (<a href="FireCal-deck.pdf">PDF</a>) · <a href="https://github.com/blazepatrol/firecal">Source code</a>, Apache-2.0</p>
+  <a href="FireCal-deck.pdf">7-slide summary (PDF)</a> · <a href="deck.html">web version</a> · <a href="https://github.com/blazepatrol/firecal">Source code</a>, Apache-2.0</p>
   <p class="fine">Fire data: NASA FIRMS (LANCE, ESDIS), through ${dname(meta.observations_through)}. Night image and night map layer: NASA Black Marble, via NASA GIBS. Basemaps © Esri, Maxar, Earthstar Geographics, © OpenStreetMap contributors. Place search © OpenStreetMap (Nominatim). Weather: Open-Meteo.</p>
+  <p class="glowcap">Background: all ${Number(meta.n_qualifying).toLocaleString()} counted NASA FIRMS detections since Nov 2000, on NASA Black Marble night lights</p>
   <p class="fine">SI disclosure: the code, charts, icons and logo were generated with SI tools, directed, reviewed and tested by the team. Fire data and the night image are NASA's.</p>`;
 }
 

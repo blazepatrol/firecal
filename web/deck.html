@@ -1,178 +1,31 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FireCal · Demo deck</title>
-<meta name="si-disclosure" content="Code, charts, icons and logo were generated with SI tools, directed, reviewed and tested by the team. Fire data and the night image are NASA's." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<style>
-  * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-  body { background: #2a2c30 !important; }
-  .deckwrap { padding: 24px 0 48px; }
-  .slide { width: 1280px; height: 720px; margin: 0 auto 28px; background: var(--bg); border-radius: 10px; padding: 52px 72px 44px; position: relative; overflow: hidden; display: flex; flex-direction: column; font-size: 20px; isolation: isolate; }
-  .slide.dark { background: #05070a; }
-  .slide h1 { font-size: 92px; line-height: .98; max-width: 7em; text-shadow: 0 2px 30px rgba(0,0,0,.5); }
-  .slide .versus .bar { animation: none !important; transform: none !important; }
-  .slide h2 { font-size: 52px; line-height: 1.02; margin-bottom: 12px; }
-  .slide .lead { font-size: 22px; color: var(--ink-2); max-width: 900px; margin: 0 0 16px; }
-  .pg { position: absolute; right: 30px; bottom: 18px; font-size: 13px; color: var(--ink-3); }
-  .more { position: absolute; left: 72px; bottom: 18px; font-size: 13px; color: var(--ink-3); }
-  .cols { display: grid; gap: 40px; flex: 1; min-height: 0; align-items: center; }
-  .title .who { margin-top: auto; font-size: 20px; }
-  .title .who span { color: #9aa0a8; }
-  .title .lead { color: #e4e2da; max-width: 22em; margin-top: 22px; font-size: 26px; }
-  .title .kicker { color: #ffb454; }
-  .slide .versus { position: static; padding: 16px 22px; }
-  .slide .vs-panel h3 { font-size: 18px; }
-  .slide .stat { grid-template-columns: 1fr; gap: 6px; border: 0; padding: 0; margin-top: 10px; }
-  .slide .stat b { font-size: 120px; }
-  .slide .stat p { font-size: 20px; }
-  .slide .story-chart { flex: 1; min-height: 0; display: flex; align-items: center; }
-  .slide .story-chart svg { width: 100%; height: auto; max-height: 430px; }
-  .slide .story-chart text { font: 13px Inter, sans-serif; fill: var(--ink-3); }
-  .slide .story-chart .lab { font-weight: 600; fill: var(--ink); }
-  .steps3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 4px 0 8px; }
-  .steps3 div { border: 1px solid var(--line-2); border-radius: 12px; padding: 12px 14px; font-size: 17px; color: var(--ink-2); background: var(--surface); }
-  .steps3 b { color: #fff; background: var(--ember); border-radius: 50%; width: 24px; height: 24px; display: inline-grid; place-items: center; font-size: 13px; margin-right: 8px; }
-  .pts { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; font-size: 18px; color: var(--ink-2); }
-  .pts li { padding-left: 16px; border-left: 3px solid var(--ember); }
-  .pts b { color: var(--ink); }
-  .slide .clock svg { max-height: 500px; width: auto; margin: 0; }
-  .slide .legend { font-size: 12px; margin-top: 8px; }
-  .slide ul.insights li { font-size: 18px; }
-  .slide .pcard { padding: 28px; }
-  .slide .pcard h3 { font-size: 15px; }
-  .slide .pcard .num { font-size: 76px; }
-  .slide .pcard p { font-size: 18px; }
-  .slide .hb { font-size: 17px; }
-  .slide .hbars { gap: 18px; }
-  .uselist { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 8px; }
-  .uselist > div { background: var(--surface); border: 1px solid var(--line-2); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
-  .uselist .ib { color: var(--ember); margin-bottom: 12px; }
-  .uselist b { display: block; font-size: 17px; }
-  .uselist p { font-size: 15px; color: var(--ink-2); margin-top: 4px; }
-  .uselist .ans { font: 400 30px/1.1 var(--display); margin-top: 10px; }
-  .uselist .fine { font-size: 13px; color: var(--ink-3); }
-  .next { margin-top: auto; display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: end; }
-  .next p { font-size: 17px; color: var(--ink-2); }
-  .next b { color: var(--ink); }
-  .next .url { font: 400 34px/1.1 var(--display); color: var(--ink); }
-  .hidden { display: none !important; }
-  @media print { body { background: #fff !important; } .deckwrap { padding: 0; zoom: 1 !important; } .slide { margin: 0; border-radius: 0; page-break-after: always; } @page { size: 1280px 720px; margin: 0; } }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FireCal · 7-slide summary · Team BlazePatrol</title>
+  <meta name="description" content="FireCal: 25 years of Houston fire records on one satellite scale. NASA Space Apps Challenge 2026, Harmonization of MODIS and VIIRS Hot Spots. Team BlazePatrol." />
+  <meta name="si-disclosure" content="Code, charts, icons and text were generated with SI tools, directed, reviewed and tested by the team. Fire data and night imagery are NASA's." />
+  <style>
+    body { margin: 0; background: #140e0c; color: #f6f0e8; font: 15px/1.5 Archivo, system-ui, sans-serif; }
+    header { max-width: 1280px; margin: 0 auto; padding: 22px 20px 6px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    header b { font: 800 22px/1 "Big Shoulders Display", Impact, sans-serif; letter-spacing: .1em; }
+    header a { color: #ff8a52; margin-left: 16px; }
+    main { max-width: 1280px; margin: 0 auto; padding: 10px 20px 40px; display: flex; flex-direction: column; gap: 18px; }
+    img { width: 100%; height: auto; display: block; border-radius: 10px; box-shadow: 0 16px 40px rgba(0,0,0,.45); }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800&family=Archivo:wght@400;600&display=swap" rel="stylesheet" />
 </head>
-<body data-deck>
-<div class="deckwrap">
-
-<section class="slide dark title">
-  <img class="hero-bg" src="night.jpg" alt="" /><canvas id="sky" aria-hidden="true"></canvas><div class="hero-shade"></div>
-  <p class="kicker">NASA Space Apps Challenge 2026 · Harmonization of MODIS and VIIRS Hot Spots</p>
-  <h1>Is fire activity in your area normal?</h1>
-  <p class="lead">FireCal compares it with 25 years of NASA satellite records.</p>
-  <p class="who"><b>Team BlazePatrol</b> · Evan Girard-Sun<br/><span>Houston, Texas</span></p>
-  <span class="pg" style="color:#9aa0a8">1 / 7</span>
-</section>
-
-<section class="slide">
-  <div class="cols" style="grid-template-columns:.8fr 1.2fr;align-items:start">
-    <div>
-      <p class="kicker">Problem</p>
-      <h2>MODIS and VIIRS records don't match</h2>
-      <div class="stat"><b data-count="jump"></b><p>more burning in VIIRS (since 2012) than in MODIS (since 2000), same area, same years. MODIS is retiring. Records before 2012 can't be compared with today.</p></div>
-    </div>
-    <div class="versus card" id="versus">
-      <div class="vs-panel" style="border:0;padding-top:0">
-        <h3>Raw records</h3>
-        <div class="stripes" id="stripes-raw"></div>
-        <p class="vs-note bad"><i data-icon="alert"></i><span id="vs-bad"></span></p>
-      </div>
-      <div class="vs-panel">
-        <h3>FireCal</h3>
-        <div class="stripes" id="stripes-harm"></div>
-        <p class="vs-note good"><i data-icon="shield"></i><span>One scale across both sensors.</span></p>
-      </div>
-    </div>
-  </div>
-  <span class="pg">2 / 7</span>
-</section>
-
-<section class="slide">
-  <p class="kicker">Solution</p>
-  <h2>FireCal puts both sensors on one scale</h2>
-  <div class="steps3">
-    <div><b>1</b>Every NASA FIRMS detection on one 1 km grid</div>
-    <div><b>2</b>A model learns MODIS to VIIRS from 2012–2026</div>
-    <div><b>3</b>2000–2011 rebuilt, with a likely range</div>
-  </div>
-  <div class="story-chart" id="story-harm"></div>
-  <span class="more">Method and data: blazepatrol.github.io/firecal/#how</span><span class="pg">3 / 7</span>
-</section>
-
-<section class="slide">
-  <p class="kicker">Product</p>
-  <h2>One screen answers it</h2>
-  <div class="cols" style="grid-template-columns:2.2fr 1fr;align-items:start;margin-top:4px;gap:32px">
-    <img src="tool.jpg" alt="FireCal tool: map of recent fires and smoke drift beside the verdict" style="width:100%;aspect-ratio:1280/700;object-fit:cover;object-position:top;border-radius:12px;border:1px solid var(--line)" />
-    <ul class="pts">
-      <li><b>Current fires</b>, sized by strength</li>
-      <li><b>Normal or not</b>: this month against the 25-year median</li>
-      <li><b>Smoke drift</b> from each fire, by forecast wind</li>
-      <li><b>Squares</b> where burning is above usual</li>
-      <li><b>5-day</b> fire-spread outlook</li>
-      <li><b>Search</b>, click, or use your location</li>
-    </ul>
-  </div>
-  <span class="more">Try it: blazepatrol.github.io/firecal</span><span class="pg">4 / 7</span>
-</section>
-
-<section class="slide">
-  <p class="kicker">Burning calendar</p>
-  <h2 id="calhead">2000–2026</h2>
-  <div class="cols" style="grid-template-columns:1.25fr 1fr;align-items:start;gap:36px">
-    <div><div id="clock" class="clock"></div><div id="legend" class="legend"></div></div>
-    <div>
-      <p class="lead" style="font-size:20px">One square per month, 2000 to today. Darker means more burning. Any area, any dates, with CSV download.</p>
-      <ul id="insights" class="insights"></ul>
-    </div>
-  </div>
-  <span class="pg">5 / 7</span>
-</section>
-
-<section class="slide">
-  <p class="kicker">Accuracy</p>
-  <h2>Tested on 15 hidden years</h2>
-  <p class="lead">Each year from 2012 to 2026 was hidden, rebuilt from MODIS, and compared with VIIRS.</p>
-  <div class="proofgrid" id="proofgrid" style="flex:1;min-height:0;margin:6px 0 30px"></div>
-  <span class="more">Full statistics: blazepatrol.github.io/firecal/#proof</span><span class="pg">6 / 7</span>
-</section>
-
-<section class="slide">
-  <p class="kicker">Use cases</p>
-  <h2>Who it is for</h2>
-  <div class="uselist" id="uselist"></div>
-  <div class="next">
-    <p><b>Also:</b> insurance and risk, air quality and public health.<br/><b>Next:</b> any region with NASA FIRMS data, hourly refresh, alerts when an area turns unusual.</p>
-    <p class="url">blazepatrol.github.io/firecal</p>
-  </div>
-  <p style="color:var(--ink-3);font-size:12.5px;margin:10px 0 0">Data: NASA FIRMS (MODIS Collection 6.1, VIIRS 375 m Collection 2), NASA Black Marble. Basemaps © Esri, © OpenStreetMap contributors. Weather: Open-Meteo. SI disclosure: code, charts, icons and logo were generated with SI tools, directed, reviewed and tested by the team.</p>
-  <span class="pg">7 / 7</span>
-</section>
-
-</div>
-<div class="hidden">
-  <div id="places"></div><div id="answer"></div><div id="detail"></div>
-  <div id="storychart"></div><div id="storycap"></div><div id="trust"></div>
-  <span id="updated"></span><div id="tech"></div><div id="foot"></div>
-</div>
-<div id="tip" class="tip" hidden></div>
-<script>
-  // shrink slides to fit windows narrower than a slide (print keeps full size)
-  const fit = () => { document.querySelector('.deckwrap').style.zoom = Math.min(1, innerWidth / 1320); };
-  addEventListener('resize', fit); fit();
-</script>
-<script type="module" src="/src/main.ts"></script>
+<body>
+  <header><b>FIRECAL · 7-SLIDE SUMMARY</b><span><a href="FireCal-deck.pdf">PDF</a><a href="./">Open the tool</a></span></header>
+  <main>
+    <img src="/deck/slide1.jpg" alt="Slide 1: FireCal, 25 years of Houston fire records on one satellite scale. Team BlazePatrol, Evan Girard-Sun, NASA Space Apps Challenge 2026, Harmonization of MODIS and VIIRS Hot Spots." />
+    <img src="/deck/slide2.jpg" alt="Slide 2: In 2012 Houston's fire record jumps 3.7 times because VIIRS replaced MODIS." loading="lazy" />
+    <img src="/deck/slide3.jpg" alt="Slide 3: FireCal puts both sensors on one scale in four steps." loading="lazy" />
+    <img src="/deck/slide4.jpg" alt="Slide 4: Tested on 15 years it had not seen: 9 percent yearly error." loading="lazy" />
+    <img src="/deck/slide5.jpg" alt="Slide 5: The FireCal tool." loading="lazy" />
+    <img src="/deck/slide6.jpg" alt="Slide 6: Six Houston users and their answers from today's data." loading="lazy" />
+    <img src="/deck/slide7.jpg" alt="Slide 7: Next steps, links and data sources." loading="lazy" />
+  </main>
 </body>
 </html>
